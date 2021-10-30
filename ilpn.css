@@ -1,0 +1,75 @@
+.whitetext
+{
+	color:white;
+	-webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.blacktext
+{
+	color:black;
+}
+
+.greybutton
+{
+	opacity: 0.2;
+}
+
+.readybutton
+{
+	opacity: 1;
+}
+
+
+#button1
+{
+	width: 100px;
+	height: 100px;
+	background-image: url("images/pn.jpg");
+	background-size:cover;
+	margin : 0px;
+	border : 0px;
+	padding : 0px;
+}
+
+div.pn
+{
+	width: 100px;
+	height: 100px;
+	background-image: url("images/pn_wait.jpg");
+	background-size:cover;
+	
+	opacity: 0.5;
+}
+
+
+#fileUpload
+{
+	width: 100px;
+	height: 100px;
+	background-image: url("images/pn.jpg");
+	background-size:cover;
+}
+
+
+
+#UploadButtonContainer1
+{
+	width: 100px;
+	height: 100px;
+}
+
+.hover
+{
+	opacity: 1;
+}
+
+.uploaded
+{
+	opacity: 1;
+}
