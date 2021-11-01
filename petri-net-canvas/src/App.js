@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-import CanvasController from "./canvas-controller";
+import CanvasController from "./canvas.controller";
 
 function App() {
   return (
