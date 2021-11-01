@@ -10,7 +10,6 @@ export interface PetriNet {
 
 export interface PNElement {
     startCoordinates: Coordinates;
-    endCoordinates: Coordinates;
     draw: (ctx: CanvasRenderingContext2D) => void;
 }
 

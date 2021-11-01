@@ -6,6 +6,7 @@ import {Transition} from "./model/transition";
 class CanvasController extends Component {
     private isDrawElement = false;
     private startCoordinates: Coordinates | undefined;
+    private maxDistance: Coordinates = {x:0, y:0};
     private petriNet: PetriNet;
     private initialized = false;
     private detectedShape = Shape.UNDEFINED;
@@ -57,6 +58,7 @@ class CanvasController extends Component {
         this.isStartPositionLeft = false;
         this.detectedShape = Shape.UNDEFINED;
         this.complete = false;
+        this.maxDistance = {x:0,y:0}
     }
 
     onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
@@ -74,16 +76,13 @@ class CanvasController extends Component {
         this.canvasCtx.closePath();
 
         if (this.startCoordinates && this.complete) {
-            const coordinates = {
-                x: event.clientX,
-                y: event.clientY
-            }
+
             switch (this.detectedShape) {
                 case Shape.PLACE:
-                    this.petriNet.places.push(new Place(this.startCoordinates, coordinates));
+                    this.petriNet.places.push(new Place(this.startCoordinates, this.maxDistance));
                     break;
                 case Shape.TRANSITION:
-                    this.petriNet.transitions.push(new Transition(this.startCoordinates, coordinates));
+                    this.petriNet.transitions.push(new Transition(this.startCoordinates, this.maxDistance));
                     break;
             }
         }
@@ -99,7 +98,7 @@ class CanvasController extends Component {
             }
 
             // detect is place
-            if(event.clientX - this.startCoordinates?.x < - 10) {
+            if(event.clientX - this.startCoordinates?.x < - 20) {
                 this.detectedShape = Shape.PLACE
             }
 
@@ -111,9 +110,16 @@ class CanvasController extends Component {
                 this.complete = true;
             }
 
-                this.canvasCtx.lineTo(event.clientX , event.clientY);
-                this.canvasCtx.stroke();
+            //detect most far distance
+            if (Math.abs( event.clientX - this.startCoordinates.x) > Math.abs(this.maxDistance.x)) {
+                this.maxDistance.x =  event.clientX -this.startCoordinates.x;
+            }
+            if (Math.abs(event.clientY -this.startCoordinates.y) > Math.abs(this.maxDistance.y)) {
+                this.maxDistance.y = event.clientY - this.startCoordinates.y;
+            }
 
+            this.canvasCtx.lineTo(event.clientX , event.clientY);
+            this.canvasCtx.stroke();
         }
     }
 
