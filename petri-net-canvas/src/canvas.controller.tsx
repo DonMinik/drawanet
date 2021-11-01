@@ -5,13 +5,14 @@ import {Transition} from "./model/transition";
 
 class CanvasController extends Component {
     private isDrawElement = false;
-    private startCoordinates: Coordinates | undefined;
-    private maxDistance: Coordinates = {x:0, y:0};
+    private startCoordinates: Coordinates = {x:0, y:0};
     private petriNet: PetriNet;
     private initialized = false;
     private detectedShape = Shape.UNDEFINED;
     private complete = false;
     private isStartPositionLeft = false;
+
+    private mouseMovement: Coordinates[] = [];
 
     canvasRef: any;
     constructor(props: any) {
@@ -53,12 +54,42 @@ class CanvasController extends Component {
 
     private reset() {
         this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
-        this.startCoordinates = undefined;
+        this.startCoordinates = {x:0, y:0};
         this.isDrawElement = false;
         this.isStartPositionLeft = false;
         this.detectedShape = Shape.UNDEFINED;
         this.complete = false;
-        this.maxDistance = {x:0,y:0}
+        this.mouseMovement = [];
+    }
+
+    private detectShape() {
+        if(this.mouseMovement.filter(c => this.isStartPosition(c.x, c.y))) {
+            this.complete = true;
+            this.detectedShape = this.mouseMovement.filter(c => c.x - this.startCoordinates?.x < -20).length > 0 ? Shape.PLACE : Shape.TRANSITION;
+        }
+    }
+
+    private get maxDistance() {
+       return {
+           x: this.mouseMovement.reduce((prev, current) => (Math.abs(prev.x) > Math.abs(current.x)) ? prev : current).x,
+           y: this.mouseMovement.reduce((prev, current) => (Math.abs(prev.y) > Math.abs(current.y)) ? prev : current).y
+       }
+    }
+
+    private get circleProperties() {
+        const highestX = this.mouseMovement.reduce((prev, current) => (prev.x > current.x) ? prev : current).x;
+        const lowestX = this.mouseMovement.reduce((prev, current) => (prev.x < current.x) ? prev : current).x;
+        const highestY = this.mouseMovement.reduce((prev, current) => (prev.y > current.y) ? prev : current).y;
+        const lowestY = this.mouseMovement.reduce((prev, current) => (prev.y < current.y) ? prev : current).y;
+
+
+        return {
+            radius: Math.abs(highestX - lowestX) > Math.abs((highestY - lowestY)) ? Math.abs(highestX - lowestX) : Math.abs((highestY - lowestY)),
+                centerCoordinates: {
+                x: (highestX - lowestX) / 2 + lowestX,
+                y: (highestY - lowestY) / 2 + lowestY
+            }
+        }
     }
 
     onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
@@ -74,12 +105,13 @@ class CanvasController extends Component {
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
         this.canvasCtx.closePath();
-
+        this.detectShape();
         if (this.startCoordinates && this.complete) {
 
             switch (this.detectedShape) {
                 case Shape.PLACE:
-                    this.petriNet.places.push(new Place(this.startCoordinates, this.maxDistance));
+                    const circleProps = this.circleProperties;
+                    this.petriNet.places.push(new Place(circleProps.centerCoordinates, circleProps.radius));
                     break;
                 case Shape.TRANSITION:
                     this.petriNet.transitions.push(new Transition(this.startCoordinates, this.maxDistance));
@@ -92,8 +124,10 @@ class CanvasController extends Component {
 
     onMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
         if(this.isDrawElement && this.startCoordinates) {
+            this.mouseMovement.push({x: event.clientX, y:event.clientY});
+
             //detect if start region is left
-            if (Math.abs(this.startCoordinates.x - event.clientX) > 10 && Math.abs(this.startCoordinates.y - event.clientY)) {
+         /*   if (Math.abs(this.startCoordinates.x - event.clientX) > 10 && Math.abs(this.startCoordinates.y - event.clientY)) {
                 this.isStartPositionLeft = true;
             }
 
@@ -116,7 +150,7 @@ class CanvasController extends Component {
             }
             if (Math.abs(event.clientY -this.startCoordinates.y) > Math.abs(this.maxDistance.y)) {
                 this.maxDistance.y = event.clientY - this.startCoordinates.y;
-            }
+            } */
 
             this.canvasCtx.lineTo(event.clientX , event.clientY);
             this.canvasCtx.stroke();
@@ -141,6 +175,11 @@ enum Shape {
     PLACE,
     TRANSITION,
     ARC
+}
+
+interface CircleProperties {
+    centerCoordinates: Coordinates,
+    radius: number
 }
 
 export default CanvasController;

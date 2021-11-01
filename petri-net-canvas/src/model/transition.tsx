@@ -13,8 +13,8 @@ export class Transition implements PNElement {
     draw(ctx: CanvasRenderingContext2D) {
         const x = this.startCoordinates.x - ctx.canvas.offsetLeft;
         const y = this.startCoordinates.y - ctx.canvas.offsetTop;
-        const w = this.maxCoordinates.x;
-        const h = this.maxCoordinates.y;
+        const w = this.maxCoordinates.x - x;
+        const h = this.maxCoordinates.y - y;
         console.log('Rect: ', x, y, w, h)
         console.log('from ', this.startCoordinates);
         ctx.beginPath();
