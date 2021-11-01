@@ -11,6 +11,11 @@ export class Arc implements PNElement {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-
+        // todo: draw arrow head
+        ctx.beginPath();
+        ctx.moveTo(this.startCoordinates.x, this.startCoordinates.y);
+        ctx.lineTo(this.endCoordinates.x, this.endCoordinates.y);
+        ctx.stroke();
+        ctx.closePath();
     }
 }

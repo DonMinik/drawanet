@@ -2,9 +2,11 @@ import React, {Component} from "react";
 import {Coordinates, PetriNet} from "./model/petri-net.interfaces";
 import {Place} from "./model/place";
 import {Transition} from "./model/transition";
+import {Arc} from "./model/arc";
 
 class CanvasController extends Component {
     private isDrawElement = false;
+    //todo: remove -> this is item 0 in mouseMovement
     private startCoordinates: Coordinates = {x:0, y:0};
     private petriNet: PetriNet;
     private initialized = false;
@@ -40,6 +42,7 @@ class CanvasController extends Component {
 
     private paintNet() {
         this.petriNet.arcs.forEach(arc => arc.draw(this.canvasCtx));
+        // todo: fill inside of places and transitions white
         this.petriNet.places.forEach(place => place.draw(this.canvasCtx));
         this.petriNet.transitions.forEach(transitions => transitions.draw(this.canvasCtx));
     }
@@ -57,7 +60,52 @@ class CanvasController extends Component {
         this.mouseMovement = [];
     }
 
+    /**
+     * todo: refactor
+     * @private
+     */
     private detectShape() {
+
+        //Detect arcs
+        this.petriNet.places.forEach(place => {
+            if(place.isWithin( this.mouseMovement[0])) {
+                this.detectedShape = Shape.ARC;
+                this.petriNet.transitions.forEach(transition => {
+                    if(transition.isWithin( this.mouseMovement[this.mouseMovement.length -1])) {
+                        this.complete = true;
+                    }
+                })
+            }
+        });
+
+        if (this.detectedShape != Shape.UNDEFINED && this.complete) {
+            return;
+        }
+
+        this.petriNet.transitions.forEach(transition => {
+            if(transition.isWithin( this.mouseMovement[0])) {
+                this.detectedShape = Shape.ARC;
+                this.petriNet.places.forEach(place => {
+                    if(place.isWithin( this.mouseMovement[this.mouseMovement.length -1])) {
+                        this.complete = true;
+                    }
+                })
+            }
+        });
+
+        if (this.detectedShape != Shape.UNDEFINED && this.complete) {
+            return;
+        }
+
+        //detect places and transitions
+        this.detectReturnToStartPosition();
+
+        if(this.complete) {
+            this.detectedShape = this.mouseMovement.filter(c => c.x - this.startCoordinates?.x < -20).length > 0 ? Shape.PLACE : Shape.TRANSITION;
+        }
+    }
+
+    private detectReturnToStartPosition() {
         let isStartPositionLeft = false;
         this.mouseMovement.forEach(c => {
             const isStartPosition = this.isStartPosition(c.x, c.y);
@@ -68,10 +116,6 @@ class CanvasController extends Component {
                 this.complete = true;
             }
         });
-
-        if(this.complete) {
-            this.detectedShape = this.mouseMovement.filter(c => c.x - this.startCoordinates?.x < -20).length > 0 ? Shape.PLACE : Shape.TRANSITION;
-        }
     }
 
     private get maxDistance(): Coordinates {
@@ -118,6 +162,9 @@ class CanvasController extends Component {
                     break;
                 case Shape.TRANSITION:
                     this.petriNet.transitions.push(new Transition(this.startCoordinates, this.maxDistance));
+                    break;
+                case Shape.ARC:
+                    this.petriNet.arcs.push(new Arc(this.startCoordinates, {x: event.clientX, y: event.clientY}));
                     break;
             }
         }

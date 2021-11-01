@@ -9,8 +9,11 @@ export interface PetriNet {
 }
 
 export interface PNElement {
-    startCoordinates: Coordinates;
     draw: (ctx: CanvasRenderingContext2D) => void;
+}
+
+export interface PNNode extends PNElement {
+    isWithin: (coordinates: Coordinates) => boolean
 }
 
 

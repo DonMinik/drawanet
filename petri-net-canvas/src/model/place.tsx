@@ -1,6 +1,6 @@
-import {Coordinates, Mark} from "./petri-net.interfaces";
+import {Coordinates, Mark, PNNode} from "./petri-net.interfaces";
 
-export class Place {
+export class Place implements PNNode{
 
     centerCoordinates: Coordinates;
     radius: number;
@@ -12,11 +12,16 @@ export class Place {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-
-
         ctx.beginPath();
         ctx.arc(this.centerCoordinates.x, this.centerCoordinates.y, this.radius, 0, 2 * Math.PI, false);
         ctx.stroke();
         ctx.closePath();
+    }
+
+    isWithin(coordinates: Coordinates): boolean {
+        if (!coordinates) {
+            return false;
+        }
+        return Math.abs(coordinates.x - this.centerCoordinates.x) <= this.radius && Math.abs(coordinates.x - this.centerCoordinates.x) <= this.radius;
     }
 }

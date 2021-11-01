@@ -1,6 +1,6 @@
-import {Coordinates, PNElement} from "./petri-net.interfaces";
+import {Coordinates, PNNode} from "./petri-net.interfaces";
 
-export class Transition implements PNElement {
+export class Transition implements PNNode {
 
     maxCoordinates: Coordinates;
     startCoordinates: Coordinates;
@@ -20,6 +20,28 @@ export class Transition implements PNElement {
         ctx.beginPath();
         ctx.strokeRect(x,y,w,h);
         ctx.closePath();
+    }
+
+    isWithin(coordinates: Coordinates): boolean {
+        if (!coordinates) {
+            return false;
+        }
+        let xWithin: boolean;
+        let yWithin: boolean;
+
+        if(  Math.sign(this.maxCoordinates.x - this.startCoordinates.x) === 1) {
+            xWithin = this.maxCoordinates.x - this.startCoordinates.x > this.maxCoordinates.x - coordinates.x;
+        } else {
+            xWithin = this.startCoordinates.x - this.maxCoordinates.x > this.startCoordinates.x - coordinates.x;
+        }
+
+        if(  Math.sign(this.maxCoordinates.y- this.startCoordinates.y) === 1) {
+            yWithin = this.maxCoordinates.y - this.startCoordinates.y > this.maxCoordinates.y - coordinates.y;
+        } else {
+            yWithin = this.startCoordinates.y - this.maxCoordinates.y > this.startCoordinates.y - coordinates.y;
+        }
+
+        return  xWithin && yWithin;
     }
 
 
