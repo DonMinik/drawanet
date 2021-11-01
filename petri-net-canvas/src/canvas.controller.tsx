@@ -33,6 +33,11 @@ class CanvasController extends Component {
         return _ctx;
     }
 
+    private paintNet() {
+        this.petriNet.arcs.forEach(arc => arc.draw(this.canvasCtx));
+        this.petriNet.places.forEach(place => place.draw(this.canvasCtx));
+        this.petriNet.transitions.forEach(transitions => transitions.draw(this.canvasCtx));
+    }
 
     onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
         this.isDrawElement = true;
@@ -41,33 +46,37 @@ class CanvasController extends Component {
             y: event.clientY
         }
         this.canvasCtx.beginPath();
+        this.canvasCtx.moveTo(event.clientX, event.clientY);
 
     }
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
         this.isDrawElement = false;
         this.canvasCtx.closePath();
+        this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
 
-        const coordinates = {
-            x: event.clientX,
-            y: event.clientY
-        }
         if (this.startCoordinates) {
+            const coordinates = {
+                x: event.clientX,
+                y: event.clientY
+            }
             const place = new Place(this.startCoordinates, coordinates)
-            place.draw(this.canvasCtx);
+            this.petriNet.places.push(place);
             this.startCoordinates = undefined;
         }
+
+        this.paintNet();
     }
 
     onMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
         if(this.isDrawElement) {
 
-            if (this.startCoordinates) {
-                const x = this.startCoordinates?.x - this.canvasCtx.canvas.offsetLeft;
-                const y = this.startCoordinates?.y - this.canvasCtx.canvas.offsetTop;
-                this.canvasCtx.lineTo(x, y);
+         //   if (this.startCoordinates) {
+           //     const x = this.startCoordinates?.x - this.canvasCtx.canvas.offsetLeft;
+             //   const y = this.startCoordinates?.y - this.canvasCtx.canvas.offsetTop;
+                this.canvasCtx.lineTo(event.clientX , event.clientY);
                 this.canvasCtx.stroke();
-            }
+           // }
         }
     }
 

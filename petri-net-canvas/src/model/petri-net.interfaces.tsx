@@ -1,5 +1,6 @@
 import {Place} from "./place";
 import {Transition} from "./transition";
+import {Arc} from "./arc";
 
 export interface PetriNet {
     places: Place[],
@@ -21,8 +22,4 @@ export interface Coordinates {
 
 export interface Mark {
 
-}
-
-export interface Arc extends Element{
-    weight: number;
 }

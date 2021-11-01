@@ -1,9 +1,10 @@
-import {Coordinates} from "./petri-net.interfaces";
+import {Coordinates, Mark} from "./petri-net.interfaces";
 
 export class Place {
 
     endCoordinates: Coordinates;
     startCoordinates: Coordinates;
+    marks: Mark[] = [];
 
     constructor(start: Coordinates, end:Coordinates) {
         this.startCoordinates = start;
