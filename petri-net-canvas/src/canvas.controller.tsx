@@ -1,12 +1,16 @@
 import React, {Component} from "react";
 import {Coordinates, PetriNet} from "./model/petri-net.interfaces";
 import {Place} from "./model/place";
+import {Transition} from "./model/transition";
 
 class CanvasController extends Component {
     private isDrawElement = false;
     private startCoordinates: Coordinates | undefined;
     private petriNet: PetriNet;
     private initialized = false;
+    private detectedShape = Shape.UNDEFINED;
+    private complete = false;
+    private isStartPositionLeft = false;
 
     canvasRef: any;
     constructor(props: any) {
@@ -39,6 +43,22 @@ class CanvasController extends Component {
         this.petriNet.transitions.forEach(transitions => transitions.draw(this.canvasCtx));
     }
 
+    private isStartPosition(x: number,y: number) {
+        if (this.startCoordinates && this.isStartPositionLeft) {
+            return Math.abs(x - this.startCoordinates?.x) <  10 && Math.abs(y -this.startCoordinates?.y) < 10;
+        }
+        return this.startCoordinates?.x === x && this.startCoordinates?.y === y;
+    }
+
+    private reset() {
+        this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
+        this.startCoordinates = undefined;
+        this.isDrawElement = false;
+        this.isStartPositionLeft = false;
+        this.detectedShape = Shape.UNDEFINED;
+        this.complete = false;
+    }
+
     onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
         this.isDrawElement = true;
         this.startCoordinates =  {
@@ -51,32 +71,49 @@ class CanvasController extends Component {
     }
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
-        this.isDrawElement = false;
         this.canvasCtx.closePath();
-        this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
 
-        if (this.startCoordinates) {
+        if (this.startCoordinates && this.complete) {
             const coordinates = {
                 x: event.clientX,
                 y: event.clientY
             }
-            const place = new Place(this.startCoordinates, coordinates)
-            this.petriNet.places.push(place);
-            this.startCoordinates = undefined;
+            switch (this.detectedShape) {
+                case Shape.PLACE:
+                    this.petriNet.places.push(new Place(this.startCoordinates, coordinates));
+                    break;
+                case Shape.TRANSITION:
+                    this.petriNet.transitions.push(new Transition(this.startCoordinates, coordinates));
+                    break;
+            }
         }
-
+        this.reset();
         this.paintNet();
     }
 
     onMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
-        if(this.isDrawElement) {
+        if(this.isDrawElement && this.startCoordinates) {
+            //detect if start region is left
+            if (Math.abs(this.startCoordinates.x - event.clientX) > 10 && Math.abs(this.startCoordinates.y - event.clientY)) {
+                this.isStartPositionLeft = true;
+            }
 
-         //   if (this.startCoordinates) {
-           //     const x = this.startCoordinates?.x - this.canvasCtx.canvas.offsetLeft;
-             //   const y = this.startCoordinates?.y - this.canvasCtx.canvas.offsetTop;
+            // detect is place
+            if(event.clientX - this.startCoordinates?.x < - 10) {
+                this.detectedShape = Shape.PLACE
+            }
+
+            //detect place or transition complete
+            if (this.isStartPosition(event.clientX, event.clientY)) {
+                if (this.detectedShape === Shape.UNDEFINED) {
+                    this.detectedShape = Shape.TRANSITION
+                }
+                this.complete = true;
+            }
+
                 this.canvasCtx.lineTo(event.clientX , event.clientY);
                 this.canvasCtx.stroke();
-           // }
+
         }
     }
 
@@ -91,6 +128,13 @@ class CanvasController extends Component {
             />
         </div>);
     }
+}
+
+enum Shape {
+    UNDEFINED,
+    PLACE,
+    TRANSITION,
+    ARC
 }
 
 export default CanvasController;

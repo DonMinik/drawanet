@@ -16,7 +16,13 @@ export class Place {
         const y = this.startCoordinates.y - ctx.canvas.offsetTop;
         const w = this.endCoordinates.x - ctx.canvas.offsetLeft - x;
         const h = this.endCoordinates.y - ctx.canvas.offsetTop - y
-        console.log('Rect: ', x, y, w, h)
-        ctx.strokeRect(x,y,w,h)
+        const centerX = x + (w - x) / 2;
+        const centerY = y + (h -y) / 2;
+        const radius = Math.abs((w-x > h-y ? w -x : h -y) / 2);
+        console.log('Circle: ', centerX, centerY, radius, 0, 2 * Math.PI, )
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+        ctx.stroke();
+        ctx.closePath();
     }
 }
