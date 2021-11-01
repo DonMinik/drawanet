@@ -10,7 +10,6 @@ class CanvasController extends Component {
     private initialized = false;
     private detectedShape = Shape.UNDEFINED;
     private complete = false;
-    private isStartPositionLeft = false;
 
     private mouseMovement: Coordinates[] = [];
 
@@ -46,25 +45,31 @@ class CanvasController extends Component {
     }
 
     private isStartPosition(x: number,y: number) {
-        if (this.startCoordinates && this.isStartPositionLeft) {
-            return Math.abs(x - this.startCoordinates?.x) <  10 && Math.abs(y -this.startCoordinates?.y) < 10;
-        }
-        return this.startCoordinates?.x === x && this.startCoordinates?.y === y;
+        return Math.abs(x - this.startCoordinates?.x) <  10 && Math.abs(y -this.startCoordinates?.y) < 10;
     }
 
     private reset() {
         this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
         this.startCoordinates = {x:0, y:0};
         this.isDrawElement = false;
-        this.isStartPositionLeft = false;
         this.detectedShape = Shape.UNDEFINED;
         this.complete = false;
         this.mouseMovement = [];
     }
 
     private detectShape() {
-        if(this.mouseMovement.filter(c => this.isStartPosition(c.x, c.y))) {
-            this.complete = true;
+        let isStartPositionLeft = false;
+        this.mouseMovement.forEach(c => {
+            const isStartPosition = this.isStartPosition(c.x, c.y);
+            if (!isStartPosition) {
+                isStartPositionLeft = true;
+            }
+            if (isStartPositionLeft && isStartPosition) {
+                this.complete = true;
+            }
+        });
+
+        if(this.complete) {
             this.detectedShape = this.mouseMovement.filter(c => c.x - this.startCoordinates?.x < -20).length > 0 ? Shape.PLACE : Shape.TRANSITION;
         }
     }
@@ -104,7 +109,7 @@ class CanvasController extends Component {
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
         this.canvasCtx.closePath();
         this.detectShape();
-        if (this.startCoordinates && this.complete) {
+        if (this.complete) {
 
             switch (this.detectedShape) {
                 case Shape.PLACE:
@@ -121,34 +126,8 @@ class CanvasController extends Component {
     }
 
     onMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
-        if(this.isDrawElement && this.startCoordinates) {
+        if(this.isDrawElement) {
             this.mouseMovement.push({x: event.clientX, y:event.clientY});
-
-            //detect if start region is left
-         /*   if (Math.abs(this.startCoordinates.x - event.clientX) > 10 && Math.abs(this.startCoordinates.y - event.clientY)) {
-                this.isStartPositionLeft = true;
-            }
-
-            // detect is place
-            if(event.clientX - this.startCoordinates?.x < - 20) {
-                this.detectedShape = Shape.PLACE
-            }
-
-            //detect place or transition complete
-            if (this.isStartPosition(event.clientX, event.clientY)) {
-                if (this.detectedShape === Shape.UNDEFINED) {
-                    this.detectedShape = Shape.TRANSITION
-                }
-                this.complete = true;
-            }
-
-            //detect most far distance
-            if (Math.abs( event.clientX - this.startCoordinates.x) > Math.abs(this.maxDistance.x)) {
-                this.maxDistance.x =  event.clientX -this.startCoordinates.x;
-            }
-            if (Math.abs(event.clientY -this.startCoordinates.y) > Math.abs(this.maxDistance.y)) {
-                this.maxDistance.y = event.clientY - this.startCoordinates.y;
-            } */
 
             this.canvasCtx.lineTo(event.clientX , event.clientY);
             this.canvasCtx.stroke();
