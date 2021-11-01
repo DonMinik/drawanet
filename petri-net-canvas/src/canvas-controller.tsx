@@ -1,22 +1,30 @@
-import {Component} from "react";
+import React, {Component} from "react";
 
-class CanvasController extends Component<any, any>{
-
-    constructor(props) {
-        super(props)
+class CanvasController extends Component {
+    constructor(props: any) {
+        super(props);
     }
 
-     mouseUp() {
-         alert('mouse UP');
-     }
+    private isDrawElement = false;
 
-     onMouseDown() {
-         alert('mouse down');
-     }
+    onMouseDown() {
+        this.isDrawElement = true
+     alert('mouse Down');
+    }
 
-     render() {
-        return (<canvas></canvas>);
-     }
- }
- export default CanvasController;
+    onMouseUp() {
+        this.isDrawElement = false;
+
+    }
+
+    onMouseMove() {
+
+    }
+
+    render() {
+        return<div> <canvas onMouseDown={() => this.onMouseDown()} onMouseUp={() => this.onMouseUp()} onMouseMove={() => this.onMouseMove()}/></div>;
+    }
+}
+
+export default CanvasController;
 
