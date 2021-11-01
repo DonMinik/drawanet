@@ -69,22 +69,20 @@ class CanvasController extends Component {
         }
     }
 
-    private get maxDistance() {
+    private get maxDistance(): Coordinates {
        return {
            x: this.mouseMovement.reduce((prev, current) => (Math.abs(prev.x) > Math.abs(current.x)) ? prev : current).x,
            y: this.mouseMovement.reduce((prev, current) => (Math.abs(prev.y) > Math.abs(current.y)) ? prev : current).y
        }
     }
 
-    private get circleProperties() {
+    private get circleProperties(): CircleProperties {
         const highestX = this.mouseMovement.reduce((prev, current) => (prev.x > current.x) ? prev : current).x;
         const lowestX = this.mouseMovement.reduce((prev, current) => (prev.x < current.x) ? prev : current).x;
         const highestY = this.mouseMovement.reduce((prev, current) => (prev.y > current.y) ? prev : current).y;
         const lowestY = this.mouseMovement.reduce((prev, current) => (prev.y < current.y) ? prev : current).y;
-
-
         return {
-            radius: Math.abs(highestX - lowestX) > Math.abs((highestY - lowestY)) ? Math.abs(highestX - lowestX) : Math.abs((highestY - lowestY)),
+            radius: (Math.abs(highestX - lowestX) > Math.abs((highestY - lowestY)) ? Math.abs(highestX - lowestX)  : Math.abs((highestY - lowestY)) ) / 2,
                 centerCoordinates: {
                 x: (highestX - lowestX) / 2 + lowestX,
                 y: (highestY - lowestY) / 2 + lowestY
