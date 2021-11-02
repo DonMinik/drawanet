@@ -39,6 +39,14 @@ class CanvasController extends Component {
         return _ctx;
     }
 
+    private reset() {
+        this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
+        this.isDrawElement = false;
+        this.detectedShape = Shape.UNDEFINED;
+        this.complete = false;
+        this.mouseMovement = [];
+    }
+
     private paintNet() {
         this.petriNet.arcs.forEach(arc => arc.draw(this.canvasCtx));
         this.petriNet.places.forEach(place => place.draw(this.canvasCtx));
@@ -47,14 +55,6 @@ class CanvasController extends Component {
 
     private isStartPosition(x: number,y: number) {
         return Math.abs(x - this.mouseMovement[0]?.x) <  10 && Math.abs(y -this.mouseMovement[0]?.y) < 10;
-    }
-
-    private reset() {
-        this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
-        this.isDrawElement = false;
-        this.detectedShape = Shape.UNDEFINED;
-        this.complete = false;
-        this.mouseMovement = [];
     }
 
     private isWithin(coordinates: Coordinates, nodes: PNNode[]): PNNode | undefined {
@@ -78,29 +78,14 @@ class CanvasController extends Component {
         return null;
     }
 
-
-    /**
-     * todo: refactor and fix transition hitbox bug
-     * @private
-     */
-    private detectShape(): {start: PNNode, end: PNNode} | null {
-
-
-        const arcNodes = this.detectArc();
-
-        if(arcNodes) {
-            return arcNodes;
-        }
-
-        //detect places and transitions
+    private detectPlaceOrTransition() {
         this.detectReturnToStartPosition();
 
-        if(this.complete) {
+        if (this.complete) {
             this.detectedShape = this.mouseMovement.filter(c => c.x - this.mouseMovement[0]?.x < -10).length > 0 &&
-                this.mouseMovement.filter(c => this.mouseMovement[0]?.x - c.x < -10).length > 0
+            this.mouseMovement.filter(c => this.mouseMovement[0]?.x - c.x < -10).length > 0
                 ? Shape.PLACE : Shape.TRANSITION;
         }
-        return null;
     }
 
     private detectReturnToStartPosition() {
@@ -129,7 +114,7 @@ class CanvasController extends Component {
         const highestY = this.mouseMovement.reduce((prev, current) => (prev.y > current.y) ? prev : current).y;
         const lowestY = this.mouseMovement.reduce((prev, current) => (prev.y < current.y) ? prev : current).y;
         return {
-            radius: (Math.abs(highestX - lowestX) > Math.abs((highestY - lowestY)) ? Math.abs(highestX - lowestX)  : Math.abs((highestY - lowestY)) ) / 2,
+            radius: (highestX - lowestX > (highestY - lowestY) ? highestX - lowestX  : (highestY - lowestY) ) / 2,
                 centerCoordinates: {
                 x: (highestX - lowestX) / 2 + lowestX,
                 y: (highestY - lowestY) / 2 + lowestY
@@ -150,7 +135,11 @@ class CanvasController extends Component {
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
         this.canvasCtx.closePath();
-        const nodesForArc = this.detectShape();
+        const nodesForArc = this.detectArc();
+        if(!this.complete) {
+            this.detectPlaceOrTransition();
+        }
+
         if (this.complete) {
 
             switch (this.detectedShape) {
