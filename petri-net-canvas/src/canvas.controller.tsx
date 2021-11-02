@@ -6,8 +6,6 @@ import {Arc} from "./model/arc";
 
 class CanvasController extends Component {
     private isDrawElement = false;
-    //todo: remove -> this is item 0 in mouseMovement
-    private startCoordinates: Coordinates = {x:0, y:0};
     private petriNet: PetriNet;
     private initialized = false;
     private detectedShape = Shape.UNDEFINED;
@@ -48,12 +46,11 @@ class CanvasController extends Component {
     }
 
     private isStartPosition(x: number,y: number) {
-        return Math.abs(x - this.startCoordinates?.x) <  10 && Math.abs(y -this.startCoordinates?.y) < 10;
+        return Math.abs(x - this.mouseMovement[0]?.x) <  10 && Math.abs(y -this.mouseMovement[0]?.y) < 10;
     }
 
     private reset() {
         this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
-        this.startCoordinates = {x:0, y:0};
         this.isDrawElement = false;
         this.detectedShape = Shape.UNDEFINED;
         this.complete = false;
@@ -101,7 +98,7 @@ class CanvasController extends Component {
         this.detectReturnToStartPosition();
 
         if(this.complete) {
-            this.detectedShape = this.mouseMovement.filter(c => c.x - this.startCoordinates?.x < -20).length > 0 ? Shape.PLACE : Shape.TRANSITION;
+            this.detectedShape = this.mouseMovement.filter(c => c.x - this.mouseMovement[0]?.x < -20).length > 0 ? Shape.PLACE : Shape.TRANSITION;
         }
     }
 
@@ -141,10 +138,10 @@ class CanvasController extends Component {
 
     onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
         this.isDrawElement = true;
-        this.startCoordinates =  {
+        this.mouseMovement.push(  {
             x: event.clientX,
             y: event.clientY
-        }
+        });
         this.canvasCtx.beginPath();
         this.canvasCtx.moveTo(event.clientX, event.clientY);
 
@@ -161,10 +158,10 @@ class CanvasController extends Component {
                     this.petriNet.places.push(new Place(circleProps.centerCoordinates, circleProps.radius));
                     break;
                 case Shape.TRANSITION:
-                    this.petriNet.transitions.push(new Transition(this.startCoordinates, this.maxDistance));
+                    this.petriNet.transitions.push(new Transition(this.mouseMovement[0], this.maxDistance));
                     break;
                 case Shape.ARC:
-                    this.petriNet.arcs.push(new Arc(this.startCoordinates, {x: event.clientX, y: event.clientY}));
+                    this.petriNet.arcs.push(new Arc(this.mouseMovement[0], {x: event.clientX, y: event.clientY}));
                     break;
             }
         }
