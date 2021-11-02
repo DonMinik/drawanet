@@ -31,25 +31,17 @@ export class Transition implements PNNode {
     }
 
     isWithin(coordinates: Coordinates): boolean {
-        if (!coordinates) {
-            return false;
-        }
-        let xWithin: boolean;
-        let yWithin: boolean;
 
-        if(  Math.sign(this.maxCoordinates.x - this.startCoordinates.x) === 1) {
-            xWithin = this.maxCoordinates.x - this.startCoordinates.x > this.maxCoordinates.x - coordinates.x;
-        } else {
-            xWithin = this.startCoordinates.x - this.maxCoordinates.x > this.startCoordinates.x - coordinates.x;
-        }
+        const smallestX = this.startCoordinates.x < this.maxCoordinates.x ? this.startCoordinates.x : this.maxCoordinates.x;
+        const highestX = this.startCoordinates.x > this.maxCoordinates.x ? this.startCoordinates.x : this.maxCoordinates.x;
 
-        if(  Math.sign(this.maxCoordinates.y- this.startCoordinates.y) === 1) {
-            yWithin = this.maxCoordinates.y - this.startCoordinates.y > this.maxCoordinates.y - coordinates.y;
-        } else {
-            yWithin = this.startCoordinates.y - this.maxCoordinates.y > this.startCoordinates.y - coordinates.y;
-        }
+        const smallestY = this.startCoordinates.y < this.maxCoordinates.y ? this.startCoordinates.y : this.maxCoordinates.y;
+        const highestY = this.startCoordinates.y > this.maxCoordinates.y ? this.startCoordinates.y : this.maxCoordinates.y;
 
-        return  xWithin && yWithin;
+        return coordinates.x > smallestX &&
+            coordinates.x < highestX &&
+            coordinates.y > smallestY &&
+            coordinates.y < highestY;
     }
 
     closestTouchPoint(coordinates: Coordinates): Coordinates {
