@@ -1,4 +1,5 @@
 import {Coordinates, PNNode} from "./petri-net.interfaces";
+import {create} from "domain";
 
 export class Transition implements PNNode {
 
@@ -6,9 +7,10 @@ export class Transition implements PNNode {
     startCoordinates: Coordinates;
     touchpoints: Coordinates[] = [];
 
-    constructor(start: Coordinates, end:Coordinates) {
+    constructor(start: Coordinates, max:Coordinates) {
+        console.log('create', start, max)
         this.startCoordinates = start;
-        this.maxCoordinates = end;
+        this.maxCoordinates = max;
         this.touchpoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.startCoordinates.y});
         this.touchpoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.maxCoordinates.y});
         this.touchpoints.push({x: this.startCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});

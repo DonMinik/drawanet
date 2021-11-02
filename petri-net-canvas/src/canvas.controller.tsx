@@ -57,53 +57,48 @@ class CanvasController extends Component {
         this.mouseMovement = [];
     }
 
+    private isWithin(coordinates: Coordinates, nodes: PNNode[]): PNNode | undefined {
+        console.log(coordinates, 'iswithin', nodes.find(node => node.isWithin(coordinates)))
+        return nodes.find(node => node.isWithin(coordinates));
+    }
+
+    private detectArc(): {start: PNNode, end: PNNode} | null{
+        const startWithinPlace = this.isWithin(this.mouseMovement[0], this.petriNet.places);
+        const startWithinTransition = this.isWithin(this.mouseMovement[0], this.petriNet.transitions);
+        const endsWithinPlace = this.isWithin(this.mouseMovement[this.mouseMovement.length -1], this.petriNet.places);
+        const endsWithinTransition = this.isWithin(this.mouseMovement[this.mouseMovement.length -1], this.petriNet.transitions);
+        const start =  startWithinPlace ? startWithinPlace : startWithinTransition ? startWithinTransition : null;
+        const end = endsWithinPlace ? endsWithinPlace : endsWithinTransition ? endsWithinTransition : null;
+        if (start  && end ) {
+            this.complete = true;
+            this.detectedShape = Shape.ARC;
+            console.log('arc from', start, 'to', end);
+            return {start: start, end: end};
+        }
+        return null;
+    }
+
+
     /**
      * todo: refactor
      * @private
      */
     private detectShape(): {start: PNNode, end: PNNode} | null {
 
-        //Detect arcs
-        let nodes
 
-        this.petriNet.places.forEach(place => {
-            if(place.isWithin( this.mouseMovement[0])) {
-                this.detectedShape = Shape.ARC;
-                this.petriNet.transitions.forEach(transition => {
-                    if(transition.isWithin( this.mouseMovement[this.mouseMovement.length -1])) {
-                        this.complete = true;
-                        nodes = {start:place, end:transition};
-                    }
-                })
-            }
-        });
+        const arcNodes = this.detectArc();
 
-        if (this.detectedShape != Shape.UNDEFINED && this.complete) {
-            return nodes ? nodes : null;
+        if(arcNodes) {
+            return arcNodes;
         }
-
-        this.petriNet.transitions.forEach(transition => {
-            if(transition.isWithin( this.mouseMovement[0])) {
-                this.detectedShape = Shape.ARC;
-                this.petriNet.places.forEach(place => {
-                    if(place.isWithin( this.mouseMovement[this.mouseMovement.length -1])) {
-                        this.complete = true;
-                        nodes = {start:place, end:transition};
-                    }
-                })
-            }
-        });
-
-        if (this.detectedShape != Shape.UNDEFINED && this.complete) {
-            return nodes ? nodes : null;
-        }
-
 
         //detect places and transitions
         this.detectReturnToStartPosition();
 
         if(this.complete) {
-            this.detectedShape = this.mouseMovement.filter(c => c.x - this.mouseMovement[0]?.x < -20).length > 0 ? Shape.PLACE : Shape.TRANSITION;
+            this.detectedShape = this.mouseMovement.filter(c => c.x - this.mouseMovement[0]?.x < -10).length > 0 &&
+                this.mouseMovement.filter(c => this.mouseMovement[0]?.x - c.x < -10).length > 0
+                ? Shape.PLACE : Shape.TRANSITION;
         }
         return null;
     }
@@ -123,8 +118,8 @@ class CanvasController extends Component {
 
     private get maxDistance(): Coordinates {
        return {
-           x: this.mouseMovement.reduce((prev, current) => (Math.abs(prev.x) > Math.abs(current.x)) ? prev : current).x,
-           y: this.mouseMovement.reduce((prev, current) => (Math.abs(prev.y) > Math.abs(current.y)) ? prev : current).y
+           x: this.mouseMovement.reduce((prev, current) => (Math.abs(this.mouseMovement[0].x - prev.x) > Math.abs(this.mouseMovement[0].x - current.x)) ? prev : current).x,
+           y: this.mouseMovement.reduce((prev, current) => (Math.abs(this.mouseMovement[0].y -prev.y) > Math.abs(this.mouseMovement[0].y - current.y)) ? prev : current).y
        }
     }
 
