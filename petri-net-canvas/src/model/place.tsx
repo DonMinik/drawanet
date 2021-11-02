@@ -14,6 +14,7 @@ export class Place implements PNNode{
     draw(ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
         ctx.arc(this.centerCoordinates.x, this.centerCoordinates.y, this.radius, 0, 2 * Math.PI, false);
+        ctx.fill();
         ctx.stroke();
         ctx.closePath();
     }

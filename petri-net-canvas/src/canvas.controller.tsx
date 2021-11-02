@@ -34,6 +34,7 @@ class CanvasController extends Component {
                 _ctx.canvas.height = 400;
                 _ctx.strokeStyle = '#B6DC9E';
                 _ctx.lineWidth = 1;
+                _ctx.fillStyle = '#FFFFFF';
             }
             this.initialized = true;
         }
@@ -42,7 +43,6 @@ class CanvasController extends Component {
 
     private paintNet() {
         this.petriNet.arcs.forEach(arc => arc.draw(this.canvasCtx));
-        // todo: fill inside of places and transitions white
         this.petriNet.places.forEach(place => place.draw(this.canvasCtx));
         this.petriNet.transitions.forEach(transitions => transitions.draw(this.canvasCtx));
     }

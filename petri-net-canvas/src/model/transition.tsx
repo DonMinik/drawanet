@@ -15,10 +15,11 @@ export class Transition implements PNNode {
         const y = this.startCoordinates.y - ctx.canvas.offsetTop;
         const w = this.maxCoordinates.x - x;
         const h = this.maxCoordinates.y - y;
-        console.log('Rect: ', x, y, w, h)
-        console.log('from ', this.startCoordinates);
+
         ctx.beginPath();
-        ctx.strokeRect(x,y,w,h);
+        ctx.rect(x,y,w,h);
+        ctx.fill();
+        ctx.stroke();
         ctx.closePath();
     }
 
