@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Coordinates, PetriNet} from "./model/petri-net.interfaces";
+import {Coordinates, PetriNet, PNNode} from "./model/petri-net.interfaces";
 import {Place} from "./model/place";
 import {Transition} from "./model/transition";
 import {Arc} from "./model/arc";
@@ -61,22 +61,25 @@ class CanvasController extends Component {
      * todo: refactor
      * @private
      */
-    private detectShape() {
+    private detectShape(): {start: PNNode, end: PNNode} | null {
 
         //Detect arcs
+        let nodes
+
         this.petriNet.places.forEach(place => {
             if(place.isWithin( this.mouseMovement[0])) {
                 this.detectedShape = Shape.ARC;
                 this.petriNet.transitions.forEach(transition => {
                     if(transition.isWithin( this.mouseMovement[this.mouseMovement.length -1])) {
                         this.complete = true;
+                        nodes = {start:place, end:transition};
                     }
                 })
             }
         });
 
         if (this.detectedShape != Shape.UNDEFINED && this.complete) {
-            return;
+            return nodes ? nodes : null;
         }
 
         this.petriNet.transitions.forEach(transition => {
@@ -85,14 +88,16 @@ class CanvasController extends Component {
                 this.petriNet.places.forEach(place => {
                     if(place.isWithin( this.mouseMovement[this.mouseMovement.length -1])) {
                         this.complete = true;
+                        nodes = {start:place, end:transition};
                     }
                 })
             }
         });
 
         if (this.detectedShape != Shape.UNDEFINED && this.complete) {
-            return;
+            return nodes ? nodes : null;
         }
+
 
         //detect places and transitions
         this.detectReturnToStartPosition();
@@ -100,6 +105,7 @@ class CanvasController extends Component {
         if(this.complete) {
             this.detectedShape = this.mouseMovement.filter(c => c.x - this.mouseMovement[0]?.x < -20).length > 0 ? Shape.PLACE : Shape.TRANSITION;
         }
+        return null;
     }
 
     private detectReturnToStartPosition() {
@@ -149,7 +155,7 @@ class CanvasController extends Component {
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
         this.canvasCtx.closePath();
-        this.detectShape();
+        const nodesForArc = this.detectShape();
         if (this.complete) {
 
             switch (this.detectedShape) {
@@ -161,7 +167,12 @@ class CanvasController extends Component {
                     this.petriNet.transitions.push(new Transition(this.mouseMovement[0], this.maxDistance));
                     break;
                 case Shape.ARC:
-                    this.petriNet.arcs.push(new Arc(this.mouseMovement[0], {x: event.clientX, y: event.clientY}));
+                    if (nodesForArc) {
+                        this.petriNet.arcs.push(new Arc(
+                            nodesForArc.start.closestTouchPoint(this.mouseMovement[0]),
+                            nodesForArc.end.closestTouchPoint({x: event.clientX, y: event.clientY})
+                        ));
+                    }
                     break;
             }
         }

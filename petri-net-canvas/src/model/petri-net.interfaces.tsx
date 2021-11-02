@@ -13,7 +13,8 @@ export interface PNElement {
 }
 
 export interface PNNode extends PNElement {
-    isWithin: (coordinates: Coordinates) => boolean
+    isWithin: (coordinates: Coordinates) => boolean,
+    closestTouchPoint: (coordinates: Coordinates) => Coordinates
 }
 
 

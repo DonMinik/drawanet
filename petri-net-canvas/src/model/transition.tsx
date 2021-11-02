@@ -4,10 +4,15 @@ export class Transition implements PNNode {
 
     maxCoordinates: Coordinates;
     startCoordinates: Coordinates;
+    touchpoints: Coordinates[] = [];
 
     constructor(start: Coordinates, end:Coordinates) {
         this.startCoordinates = start;
         this.maxCoordinates = end;
+        this.touchpoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.startCoordinates.y});
+        this.touchpoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.maxCoordinates.y});
+        this.touchpoints.push({x: this.startCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
+        this.touchpoints.push({x: this.maxCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
     }
 
     draw(ctx: CanvasRenderingContext2D) {
@@ -45,5 +50,8 @@ export class Transition implements PNNode {
         return  xWithin && yWithin;
     }
 
+    closestTouchPoint(coordinates: Coordinates): Coordinates {
+        return this.touchpoints.reduce((prev, current) => (Math.abs(prev.x - coordinates.x) + Math.abs(prev.x - coordinates.x) > Math.abs(current.x - coordinates.x) + Math.abs(current.x - coordinates.x)) ? current : prev);
+    }
 
 }

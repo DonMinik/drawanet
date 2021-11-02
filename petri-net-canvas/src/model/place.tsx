@@ -5,10 +5,16 @@ export class Place implements PNNode{
     centerCoordinates: Coordinates;
     radius: number;
     marks: Mark[] = [];
+    touchpoints: Coordinates[] = [];
 
     constructor(center: Coordinates, radius: number) {
         this.centerCoordinates = center;
         this.radius = radius;
+        this.touchpoints.push({x: center.x + radius, y: center.y});
+        this.touchpoints.push({x: center.x - radius, y: center.y});
+        this.touchpoints.push({x: center.x, y: center.y + radius});
+        this.touchpoints.push({x: center.x, y: center.y - radius});
+
     }
 
     draw(ctx: CanvasRenderingContext2D) {
@@ -24,5 +30,9 @@ export class Place implements PNNode{
             return false;
         }
         return Math.abs(coordinates.x - this.centerCoordinates.x) <= this.radius && Math.abs(coordinates.x - this.centerCoordinates.x) <= this.radius;
+    }
+
+    closestTouchPoint(coordinates: Coordinates): Coordinates {
+        return this.touchpoints.reduce((prev, current) => (Math.abs(prev.x - coordinates.x) + Math.abs(prev.x - coordinates.x) > Math.abs(current.x - coordinates.x) + Math.abs(current.x - coordinates.x)) ? current : prev);
     }
 }
