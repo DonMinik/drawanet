@@ -62,25 +62,25 @@ class CanvasController extends Component {
         return nodes.find(node => node.isWithin(coordinates));
     }
 
-    private detectArc(): {start: PNNode, end: PNNode} | null{
+    private detectArc(): { start: PNNode, end: PNNode  } | null{
         const startWithinPlace = this.isWithin(this.mouseMovement[0], this.petriNet.places);
         const startWithinTransition = this.isWithin(this.mouseMovement[0], this.petriNet.transitions);
         const endsWithinPlace = this.isWithin(this.mouseMovement[this.mouseMovement.length -1], this.petriNet.places);
         const endsWithinTransition = this.isWithin(this.mouseMovement[this.mouseMovement.length -1], this.petriNet.transitions);
-        const start =  startWithinPlace ? startWithinPlace : startWithinTransition ? startWithinTransition : null;
-        const end = endsWithinPlace ? endsWithinPlace : endsWithinTransition ? endsWithinTransition : null;
-        if (start  && end ) {
+        const placeToTransition =  startWithinPlace  && endsWithinTransition ;
+        const transitionToPlace = startWithinTransition && endsWithinPlace;
+        if (placeToTransition  || transitionToPlace) {
             this.complete = true;
             this.detectedShape = Shape.ARC;
-            console.log('arc from', start, 'to', end);
-            return {start: start, end: end};
+            // @ts-ignore
+            return {start: placeToTransition ? startWithinPlace : startWithinTransition, end: placeToTransition ? endsWithinTransition: endsWithinPlace};
         }
         return null;
     }
 
 
     /**
-     * todo: refactor
+     * todo: refactor and fix transition hitbox bug
      * @private
      */
     private detectShape(): {start: PNNode, end: PNNode} | null {
