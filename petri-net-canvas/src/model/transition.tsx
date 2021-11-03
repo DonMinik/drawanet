@@ -25,7 +25,7 @@ export class Transition implements PNNode {
 
         ctx.beginPath();
         ctx.rect(x,y,w,h);
-        ctx.fill();
+       // ctx.fill();
         ctx.stroke();
         ctx.closePath();
     }

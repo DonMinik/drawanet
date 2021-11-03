@@ -21,7 +21,7 @@ export class Place implements PNNode{
     draw(ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
         ctx.arc(this.centerCoordinates.x, this.centerCoordinates.y, this.radius, 0, 2 * Math.PI, false);
-        ctx.fill();
+     //   ctx.fill();
         ctx.stroke();
         ctx.closePath();
         this.drawMarks(ctx);
@@ -31,7 +31,8 @@ export class Place implements PNNode{
         if (!coordinates) {
             return false;
         }
-        return Math.abs(coordinates.x - this.centerCoordinates.x) <= this.radius && Math.abs(coordinates.x - this.centerCoordinates.x) <= this.radius;
+        return Math.sqrt((coordinates.x-this.centerCoordinates.x)*(coordinates.x-this.centerCoordinates.x) + (coordinates.y-this.centerCoordinates.y)*(coordinates.y-this.centerCoordinates.y)) < this.radius
+      //  return Math.abs(coordinates.x - this.centerCoordinates.x) <= this.radius && Math.abs(coordinates.x - this.centerCoordinates.x) <= this.radius;
     }
 
     closestTouchPoint(coordinates: Coordinates): Coordinates {

@@ -158,8 +158,8 @@ class CanvasController extends Component {
                 case Shape.ARC:
                     if (nodes && nodes.end) {
                         this.petriNet.arcs.push(new Arc(
-                            nodes.start.closestTouchPoint(this.mouseMovement[0]),
-                            nodes.end.closestTouchPoint({x: event.clientX, y: event.clientY})
+                            nodes.start.closestTouchPoint({x:event.clientX, y:event.clientY}),
+                            nodes.end.closestTouchPoint(this.mouseMovement[0])
                         ));
                     }
                     break;
