@@ -3,6 +3,7 @@ import {Coordinates, PetriNet, PNNode} from "./model/petri-net.interfaces";
 import {Place} from "./model/place";
 import {Transition} from "./model/transition";
 import {Arc} from "./model/arc";
+import {Mark} from "./model/mark";
 
 class CanvasController extends Component {
     private isDrawElement = false;
@@ -62,7 +63,7 @@ class CanvasController extends Component {
         return nodes.find(node => node.isWithin(coordinates));
     }
 
-    private detectArc(): { start: PNNode, end: PNNode  } | null{
+    private detectArc(): { start: PNNode, end?: PNNode  } | null{
         const startWithinPlace = this.isWithin(this.mouseMovement[0], this.petriNet.places);
         const startWithinTransition = this.isWithin(this.mouseMovement[0], this.petriNet.transitions);
         const endsWithinPlace = this.isWithin(this.mouseMovement[this.mouseMovement.length -1], this.petriNet.places);
@@ -74,6 +75,10 @@ class CanvasController extends Component {
             this.detectedShape = Shape.ARC;
             // @ts-ignore
             return {start: placeToTransition ? startWithinPlace : startWithinTransition, end: placeToTransition ? endsWithinTransition: endsWithinPlace};
+        } else if (startWithinPlace && endsWithinPlace && (startWithinPlace as Place).equals(endsWithinPlace as Place)){
+            this.detectedShape = Shape.MARK;
+            this.complete = true;
+            return {start: startWithinPlace};
         }
         return null;
     }
@@ -135,7 +140,7 @@ class CanvasController extends Component {
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
         this.canvasCtx.closePath();
-        const nodesForArc = this.detectArc();
+        const nodes = this.detectArc();
         if(!this.complete) {
             this.detectPlaceOrTransition();
         }
@@ -151,12 +156,16 @@ class CanvasController extends Component {
                     this.petriNet.transitions.push(new Transition(this.mouseMovement[0], this.maxDistance));
                     break;
                 case Shape.ARC:
-                    if (nodesForArc) {
+                    if (nodes && nodes.end) {
                         this.petriNet.arcs.push(new Arc(
-                            nodesForArc.start.closestTouchPoint(this.mouseMovement[0]),
-                            nodesForArc.end.closestTouchPoint({x: event.clientX, y: event.clientY})
+                            nodes.start.closestTouchPoint(this.mouseMovement[0]),
+                            nodes.end.closestTouchPoint({x: event.clientX, y: event.clientY})
                         ));
                     }
+                    break;
+                case Shape.MARK:
+                    const mark = new Mark(this.mouseMovement[0] ? this.mouseMovement[0] : {x:event.clientX, y:event.clientY});
+                    (nodes?.start as Place).addMark(mark);
                     break;
             }
         }
@@ -190,7 +199,8 @@ enum Shape {
     UNDEFINED,
     PLACE,
     TRANSITION,
-    ARC
+    ARC,
+    MARK
 }
 
 interface CircleProperties {

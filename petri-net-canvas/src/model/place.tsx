@@ -1,4 +1,5 @@
-import {Coordinates, Mark, PNNode} from "./petri-net.interfaces";
+import {Coordinates, PNNode} from "./petri-net.interfaces";
+import {Mark} from "./mark";
 
 export class Place implements PNNode{
 
@@ -23,6 +24,7 @@ export class Place implements PNNode{
         ctx.fill();
         ctx.stroke();
         ctx.closePath();
+        this.drawMarks(ctx);
     }
 
     isWithin(coordinates: Coordinates): boolean {
@@ -34,5 +36,17 @@ export class Place implements PNNode{
 
     closestTouchPoint(coordinates: Coordinates): Coordinates {
         return this.touchpoints.reduce((prev, current) => (Math.abs(prev.x - coordinates.x) + Math.abs(prev.x - coordinates.x) > Math.abs(current.x - coordinates.x) + Math.abs(current.x - coordinates.x)) ? current : prev);
+    }
+
+    equals(place: Place): boolean {
+        return place.radius === this.radius && place.centerCoordinates === this.centerCoordinates;
+    }
+
+    addMark (mark: Mark) {
+        this.marks.push(mark);
+    }
+
+    private drawMarks(ctx: CanvasRenderingContext2D) {
+        this.marks.forEach(mark => mark.draw(ctx));
     }
 }
