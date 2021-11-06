@@ -16,3 +16,15 @@ export function isWithinRect(coordinatesToCheck: Coordinates, rectCornerA: Coord
 export function getAngle(a: Coordinates, b: Coordinates){
     return Math.atan2(b.y - a.y, b.x - a.x);
 }
+export function lengthOfLine(a:Coordinates, b: Coordinates){
+    let xs = 0;
+    let ys = 0;
+
+    xs = b.x - a.x;
+    xs = xs * xs;
+
+    ys = b.y - a.y;
+    ys = ys * ys;
+
+    return Math.sqrt( xs + ys );
+}

@@ -1,16 +1,50 @@
 import {Coordinates, PNElement, PNNode} from "./petri-net.interfaces";
-import {getAngle} from "../utils/draw-utils";
+import { lengthOfLine} from "../utils/draw-utils";
 
 export class Arc implements PNElement {
-    path: Coordinates[];
     weight = 1;
+    wayPoint: {
+        coordinates: Coordinates | null,
+        multiplier: number
+    } = {
+        coordinates: null,
+        multiplier: 0
+    };
 
-    constructor(private start:PNNode, private end: PNNode, path: Coordinates[]) {
-        this.path = this.reducePath(path);
-
+    constructor(private start:PNNode, private end: PNNode, private path: Coordinates[]) {
+        this.findWayPoint()
     }
 
-    private reducePath(path: Coordinates[]): Coordinates[] {
+    private findWayPoint() {
+
+        const start = this.path[0];
+        const end = this.path[this.path.length -1];
+
+        const startToEndLength = lengthOfLine(start, end);
+
+      //  const gradient = (end.x - start.x) !== 0 ? (end.y - start.y) / (end.x - start.x): 0;
+        this.path.forEach(current => {
+          //  const currentGradient = (end.x - start.x) !== 0 ? (end.y - start.y) / (end.x - start.x): 0;
+            // check for max X
+          const startToCurrent = lengthOfLine(start, current);
+          const endToCurrent = lengthOfLine(end, current);
+          const relativeDistance = (startToCurrent + endToCurrent) / startToEndLength;
+          console.log('relative Distance', relativeDistance , ' based on  ', startToEndLength, startToCurrent, endToCurrent)
+          if(relativeDistance > 1.10 && relativeDistance > this.wayPoint.multiplier) {
+            this.wayPoint = {
+                coordinates: current,
+                multiplier: relativeDistance
+            };
+          }
+        })
+
+
+
+
+
+
+/*
+
         const start = path[0];
         const end = path[path.length -1];
         let previous = {
@@ -18,6 +52,7 @@ export class Arc implements PNElement {
             angle : Math.cos(getAngle(start, end)),
         };
         const reducedPath = [start];
+
         path.forEach(current => {
 
             const angle = getAngle(current, previous.coordinates);
@@ -45,18 +80,23 @@ export class Arc implements PNElement {
             reducedPath.push(this.end.closestTouchPoint(last));
         }
         console.log('reduced path: ', reducedPath)
-        return reducedPath;
+        return reducedPath; */
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        const startCoordinates = this.path[0];
-        const endCoordinates = this.path[this.path.length -1];
+
+        const startCoordinates = this.start.closestTouchPoint(this.path[this.path.length -1]);
+        const endCoordinates = this.end.closestTouchPoint(startCoordinates);
 
         ctx.beginPath();
         const angle = Math.atan2( endCoordinates.y - startCoordinates.y, endCoordinates.x - startCoordinates.x);
         ctx.moveTo(startCoordinates.x, startCoordinates.y);
-        this.path.forEach(point =>  ctx.lineTo(point.x, point.y));
-
+       // this.path.forEach(point =>  ctx.lineTo(point.x, point.y));
+        if(this.wayPoint.coordinates) {
+            ctx.quadraticCurveTo(this.wayPoint.coordinates.x * this.wayPoint.multiplier, this.wayPoint.coordinates.y * this.wayPoint.multiplier, endCoordinates.x, endCoordinates.y)
+        } else {
+            ctx.lineTo(endCoordinates.x, endCoordinates.y)
+        }
         ctx.lineTo(endCoordinates.x - 10 * Math.cos(angle - Math.PI / 6), endCoordinates.y - 10 * Math.sin(angle - Math.PI / 6));
         ctx.moveTo(endCoordinates.x, endCoordinates.y);
         ctx.lineTo(endCoordinates.x - 10 * Math.cos(angle + Math.PI / 6), endCoordinates.y - 10 * Math.sin(angle + Math.PI / 6));
