@@ -16,6 +16,13 @@ export class Transition implements PNNode {
         this.touchpoints.push({x: this.maxCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
     }
 
+    get centerCoordinates(): Coordinates {
+        return {
+            x: (this.startCoordinates.x + this.maxCoordinates.x) / 2,
+            y: (this.startCoordinates.y + this.maxCoordinates.y) / 2
+        };
+    }
+
     draw(ctx: CanvasRenderingContext2D) {
         const x = this.startCoordinates.x - ctx.canvas.offsetLeft;
         const y = this.startCoordinates.y - ctx.canvas.offsetTop;
