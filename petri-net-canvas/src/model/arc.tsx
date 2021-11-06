@@ -17,14 +17,14 @@ export class Arc implements PNElement {
             if (i < 2) {
                 continue;
             }
-            if(Arc.determineRelativeDisance(path[i-2], path[i-1], path[i]) > 1.1){
+            if(Arc.determineRelativeDistance(path[i-2], path[i-1], path[i]) > 1.1){
                 reducedPath.push(path[i-1]);
             }
         }
         return reducedPath;
     }
 
-    private static determineRelativeDisance(start: Coordinates, middle: Coordinates, end: Coordinates) {
+    private static determineRelativeDistance(start: Coordinates, middle: Coordinates, end: Coordinates) {
           return (lengthOfLine(start, middle) + lengthOfLine(end, middle)) / lengthOfLine(start, end);
     }
 
