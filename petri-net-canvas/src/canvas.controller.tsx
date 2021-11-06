@@ -63,24 +63,48 @@ class CanvasController extends Component {
         return nodes.find(node => node.isWithin(coordinates));
     }
 
-    private detectArc(): { start: PNNode, end?: PNNode  } | null{
+    private detectArc(): { start: PNNode, end?: PNNode, curveCoordinates?: Coordinates | null  } | null{
         const startWithinPlace = this.isWithin(this.mouseMovement[0], this.petriNet.places);
         const startWithinTransition = this.isWithin(this.mouseMovement[0], this.petriNet.transitions);
         const endsWithinPlace = this.isWithin(this.mouseMovement[this.mouseMovement.length -1], this.petriNet.places);
         const endsWithinTransition = this.isWithin(this.mouseMovement[this.mouseMovement.length -1], this.petriNet.transitions);
         const placeToTransition =  startWithinPlace  && endsWithinTransition ;
         const transitionToPlace = startWithinTransition && endsWithinPlace;
+        //ARC
         if (placeToTransition  || transitionToPlace) {
             this.complete = true;
             this.detectedShape = Shape.ARC;
+            // detect curve
+            const curveCoordinates = this.detectArcCurveCoordinates();
             // @ts-ignore
-            return {start: placeToTransition ? startWithinPlace : startWithinTransition, end: placeToTransition ? endsWithinTransition: endsWithinPlace};
-        } else if (startWithinPlace && endsWithinPlace && (startWithinPlace as Place).equals(endsWithinPlace as Place)){
+            return {start: placeToTransition ? startWithinPlace : startWithinTransition, end: placeToTransition ? endsWithinTransition: endsWithinPlace, curveCoordinates: curveCoordinates};
+        } // MARK
+        else if (startWithinPlace && endsWithinPlace && (startWithinPlace as Place).equals(endsWithinPlace as Place)){
             this.detectedShape = Shape.MARK;
             this.complete = true;
             return {start: startWithinPlace};
         }
         return null;
+    }
+
+    private detectArcCurveCoordinates(): Coordinates | null {
+        const start = this.mouseMovement[0];
+        const end = this.mouseMovement[this.mouseMovement.length -1];
+        const gradient = (end.x - start.x) !== 0? (end.y - start.y) / (end.x - start.x) : 0;
+        const curve: {coordinate: Coordinates | null, gradientDelta: number} = {
+            coordinate: null,
+            gradientDelta: 0
+        };
+        this.mouseMovement.forEach(current => {
+            const currentGradient = (current.x - start.x) !== 0 ? (current.y - start.y) / (current.x - start.x): 0;
+            const gradientDelta = Math.abs(gradient - currentGradient);
+            if (Math.abs(gradient - currentGradient) > curve.gradientDelta) {
+                curve.coordinate = {x: current.x  + current.x * gradientDelta / 10, y: current.y + current.y * gradientDelta / 10};
+                curve.gradientDelta = gradientDelta;
+            }
+        })
+
+        return curve.coordinate;
     }
 
     private detectPlaceOrTransition() {
@@ -140,7 +164,7 @@ class CanvasController extends Component {
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
         this.canvasCtx.closePath();
-        const nodes = this.detectArc();
+        const arcParameters = this.detectArc();
         if(!this.complete) {
             this.detectPlaceOrTransition();
         }
@@ -156,16 +180,17 @@ class CanvasController extends Component {
                     this.petriNet.transitions.push(new Transition(this.mouseMovement[0], this.maxDistance));
                     break;
                 case Shape.ARC:
-                    if (nodes && nodes.end) {
+                    if (arcParameters && arcParameters.end) {
                         this.petriNet.arcs.push(new Arc(
-                            nodes.start.closestTouchPoint({x:event.clientX, y:event.clientY}),
-                            nodes.end.closestTouchPoint(this.mouseMovement[0])
+                            arcParameters.start.closestTouchPoint({x:event.clientX, y:event.clientY}),
+                            arcParameters.end.closestTouchPoint(this.mouseMovement[0]),
+                            arcParameters.curveCoordinates
                         ));
                     }
                     break;
                 case Shape.MARK:
                     const mark = new Mark(this.mouseMovement[0] ? this.mouseMovement[0] : {x:event.clientX, y:event.clientY});
-                    (nodes?.start as Place).addMark(mark);
+                    (arcParameters?.start as Place).addMark(mark);
                     break;
             }
         }

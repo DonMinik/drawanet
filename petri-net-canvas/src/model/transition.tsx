@@ -1,5 +1,6 @@
 import {Coordinates, PNNode} from "./petri-net.interfaces";
 import {create} from "domain";
+import {isWithinRect} from "../draw-utils";
 
 export class Transition implements PNNode {
 
@@ -31,17 +32,7 @@ export class Transition implements PNNode {
     }
 
     isWithin(coordinates: Coordinates): boolean {
-
-        const smallestX = this.startCoordinates.x < this.maxCoordinates.x ? this.startCoordinates.x : this.maxCoordinates.x;
-        const highestX = this.startCoordinates.x > this.maxCoordinates.x ? this.startCoordinates.x : this.maxCoordinates.x;
-
-        const smallestY = this.startCoordinates.y < this.maxCoordinates.y ? this.startCoordinates.y : this.maxCoordinates.y;
-        const highestY = this.startCoordinates.y > this.maxCoordinates.y ? this.startCoordinates.y : this.maxCoordinates.y;
-
-        return coordinates.x > smallestX &&
-            coordinates.x < highestX &&
-            coordinates.y > smallestY &&
-            coordinates.y < highestY;
+        return isWithinRect(coordinates, this.startCoordinates, this.maxCoordinates);
     }
 
     closestTouchPoint(coordinates: Coordinates): Coordinates {
