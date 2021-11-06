@@ -1,5 +1,6 @@
 import {Coordinates, PNNode} from "./petri-net.interfaces";
 import {Mark} from "./mark";
+import {lengthOfLine} from "../utils/draw-utils";
 
 export class Place implements PNNode{
 
@@ -36,7 +37,9 @@ export class Place implements PNNode{
     }
 
     closestTouchPoint(coordinates: Coordinates): Coordinates {
-        return this.touchpoints.reduce((prev, current) => (Math.abs(prev.x - coordinates.x) + Math.abs(prev.x - coordinates.x) > Math.abs(current.x - coordinates.x) + Math.abs(current.x - coordinates.x)) ? current : prev);
+        return this.touchpoints.reduce((prev, current) =>
+            (lengthOfLine(current,coordinates) < lengthOfLine(prev, coordinates)) ?
+                current : prev);
     }
 
     equals(place: Place): boolean {

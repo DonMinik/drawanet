@@ -32,6 +32,9 @@ export class Arc implements PNElement {
         const last = this.path[this.path.length -1] ? this.path[this.path.length -1]: this.start.centerCoordinates ;
         const startCoordinates = this.start.closestTouchPoint(this.path[0] ? this.path[0] : this.end.centerCoordinates);
         const endCoordinates = this.end.closestTouchPoint(last);
+        console.log('#### start and end coordinates');
+        console.log(startCoordinates, this.path[0], this.end.centerCoordinates, this.start.isWithin(this.path[0]));
+        console.log(endCoordinates, last, this.start.centerCoordinates, this.end.isWithin(last));
 
         ctx.beginPath();
 

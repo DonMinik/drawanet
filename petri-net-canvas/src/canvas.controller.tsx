@@ -158,12 +158,12 @@ class CanvasController extends Component {
                     break;
                 case Shape.ARC:
                     if (arcParameters && arcParameters.end) {
-                        const filteredMovements = [
-                            ...this.mouseMovement.filter(move => {
+                        console.log('unfiltered', this.mouseMovement)
+                        const filteredMovements =
+                            this.mouseMovement.filter(move => {
                                 return !(arcParameters.start.isWithin(move) || arcParameters.end?.isWithin(move));
-                            }),
-                            ];
-
+                            });
+                        console.log('filtered', filteredMovements)
                         this.petriNet.arcs.push(new Arc( arcParameters.start, arcParameters.end, filteredMovements));
                     }
                     break;

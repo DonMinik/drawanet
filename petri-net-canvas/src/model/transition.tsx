@@ -1,5 +1,5 @@
 import {Coordinates, PNNode} from "./petri-net.interfaces";
-import {isWithinRect} from "../utils/draw-utils";
+import {isWithinRect, lengthOfLine} from "../utils/draw-utils";
 
 export class Transition implements PNNode {
 
@@ -41,7 +41,9 @@ export class Transition implements PNNode {
     }
 
     closestTouchPoint(coordinates: Coordinates): Coordinates {
-        return this.touchpoints.reduce((prev, current) => (Math.abs(prev.x - coordinates.x) + Math.abs(prev.x - coordinates.x) > Math.abs(current.x - coordinates.x) + Math.abs(current.x - coordinates.x)) ? current : prev);
+        return this.touchpoints.reduce((prev, current) =>
+            (lengthOfLine(current,coordinates) < lengthOfLine(prev, coordinates)) ?
+                current : prev);
     }
 
 }
