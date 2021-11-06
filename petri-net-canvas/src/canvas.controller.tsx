@@ -42,7 +42,6 @@ class CanvasController extends Component {
 
     private reset() {
         this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
-        this.isDrawElement = false;
         this.detectedShape = Shape.UNDEFINED;
         this.complete = false;
         this.mouseMovement = [];
@@ -59,11 +58,10 @@ class CanvasController extends Component {
     }
 
     private isWithin(coordinates: Coordinates, nodes: PNNode[]): PNNode | undefined {
-        console.log(coordinates, 'iswithin', nodes.find(node => node.isWithin(coordinates)))
         return nodes.find(node => node.isWithin(coordinates));
     }
 
-    private detectArc(): { start: PNNode, end?: PNNode, curveCoordinates?: Coordinates | null  } | null{
+    private detectArc(): { start: PNNode, end?: PNNode } | null{
         const startWithinPlace = this.isWithin(this.mouseMovement[0], this.petriNet.places);
         const startWithinTransition = this.isWithin(this.mouseMovement[0], this.petriNet.transitions);
         const endsWithinPlace = this.isWithin(this.mouseMovement[this.mouseMovement.length -1], this.petriNet.places);
@@ -74,10 +72,8 @@ class CanvasController extends Component {
         if (placeToTransition  || transitionToPlace) {
             this.complete = true;
             this.detectedShape = Shape.ARC;
-            // detect curve
-            const curveCoordinates = this.detectArcCurveCoordinates();
             // @ts-ignore
-            return {start: placeToTransition ? startWithinPlace : startWithinTransition, end: placeToTransition ? endsWithinTransition: endsWithinPlace, curveCoordinates: curveCoordinates};
+            return {start: placeToTransition ? startWithinPlace : startWithinTransition, end: placeToTransition ? endsWithinTransition: endsWithinPlace};
         } // MARK
         else if (startWithinPlace && endsWithinPlace && (startWithinPlace as Place).equals(endsWithinPlace as Place)){
             this.detectedShape = Shape.MARK;
@@ -85,26 +81,6 @@ class CanvasController extends Component {
             return {start: startWithinPlace};
         }
         return null;
-    }
-
-    private detectArcCurveCoordinates(): Coordinates | null {
-        const start = this.mouseMovement[0];
-        const end = this.mouseMovement[this.mouseMovement.length -1];
-        const gradient = (end.x - start.x) !== 0? (end.y - start.y) / (end.x - start.x) : 0;
-        const curve: {coordinate: Coordinates | null, gradientDelta: number} = {
-            coordinate: null,
-            gradientDelta: 0
-        };
-        this.mouseMovement.forEach(current => {
-            const currentGradient = (current.x - start.x) !== 0 ? (current.y - start.y) / (current.x - start.x): 0;
-            const gradientDelta = Math.abs(gradient - currentGradient);
-            if (Math.abs(gradient - currentGradient) > curve.gradientDelta) {
-                curve.coordinate = {x: current.x  + current.x * gradientDelta / 10, y: current.y + current.y * gradientDelta / 10};
-                curve.gradientDelta = gradientDelta;
-            }
-        })
-
-        return curve.coordinate;
     }
 
     private detectPlaceOrTransition() {
@@ -163,6 +139,7 @@ class CanvasController extends Component {
     }
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
+        this.isDrawElement = false;
         this.canvasCtx.closePath();
         const arcParameters = this.detectArc();
         if(!this.complete) {
@@ -181,11 +158,13 @@ class CanvasController extends Component {
                     break;
                 case Shape.ARC:
                     if (arcParameters && arcParameters.end) {
-                        this.petriNet.arcs.push(new Arc(
-                            arcParameters.start.closestTouchPoint({x:event.clientX, y:event.clientY}),
-                            arcParameters.end.closestTouchPoint(this.mouseMovement[0]),
-                            arcParameters.curveCoordinates
-                        ));
+                        const filteredMovements = [
+                            ...this.mouseMovement.filter(move => {
+                                return !(arcParameters.start.isWithin(move) || arcParameters.end?.isWithin(move));
+                            }),
+                            ];
+
+                        this.petriNet.arcs.push(new Arc( arcParameters.start, arcParameters.end, filteredMovements));
                     }
                     break;
                 case Shape.MARK:

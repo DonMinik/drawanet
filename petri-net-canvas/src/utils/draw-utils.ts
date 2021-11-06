@@ -1,4 +1,4 @@
-import {Coordinates} from "./model/petri-net.interfaces";
+import {Coordinates} from "../model/petri-net.interfaces";
 
 export function isWithinRect(coordinatesToCheck: Coordinates, rectCornerA: Coordinates, rectCornerB: Coordinates): boolean {
     const smallestX = rectCornerA.x < rectCornerB.x ? rectCornerA.x : rectCornerB.x;
@@ -11,4 +11,8 @@ export function isWithinRect(coordinatesToCheck: Coordinates, rectCornerA: Coord
         coordinatesToCheck.x < highestX &&
         coordinatesToCheck.y > smallestY &&
         coordinatesToCheck.y < highestY;
+}
+
+export function getAngle(a: Coordinates, b: Coordinates){
+    return Math.atan2(b.y - a.y, b.x - a.x);
 }
