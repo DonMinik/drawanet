@@ -22,3 +22,7 @@ export function getAngle(a: Coordinates, b: Coordinates){
 export function lengthOfLine(a:Coordinates, b: Coordinates){
     return Math.sqrt(  Math.pow(b.x - a.x, 2) + Math.pow( b.y - a.y, 2) );
 }
+export function middleOfLine(a:Coordinates, b: Coordinates): Coordinates {
+    console.log('###',a, b, {x: Math.abs(a.x -b.x), y: Math.abs(a.y -b.y) })
+    return {x: a.x + (b.x -a.x) / 2, y:a.y + (b.y -a.y) / 2 }
+}

@@ -1,5 +1,5 @@
 import {Coordinates, PNElement, PNNode} from "./petri-net.interfaces";
-import { lengthOfLine} from "../utils/draw-utils";
+import {lengthOfLine, middleOfLine} from "../utils/draw-utils";
 
 export class Arc implements PNElement {
     path: Coordinates[];
@@ -40,7 +40,9 @@ export class Arc implements PNElement {
 
         ctx.moveTo(startCoordinates.x, startCoordinates.y);
         this.path.forEach(point =>  ctx.lineTo(point.x, point.y));
-
+        const middleOfPath = this.path[Math.floor(this.path.length / 2)];
+        const weightTextPosition = middleOfPath ? middleOfPath : middleOfLine(startCoordinates, endCoordinates);
+        ctx.strokeText(String(this.weight), weightTextPosition.x, weightTextPosition.y);
         ctx.lineTo(endCoordinates.x, endCoordinates.y)
 
         const angle = Math.atan2( endCoordinates.y - last.y, endCoordinates.x - last.x);
