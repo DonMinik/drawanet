@@ -24,3 +24,8 @@ export interface Coordinates {
     x: number,
     y: number
 }
+
+export  interface Line {
+    start: Coordinates,
+    end: Coordinates
+}

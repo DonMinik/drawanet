@@ -162,7 +162,10 @@ class CanvasController extends Component {
         //transitions
         const potentialTransitionsToDelete = this.determinePotentialNodesToDelete(this.petriNet.transitions);
 
-
+        //arcs
+        const potentialArcsToDelete = this.petriNet.arcs.filter(arc => {
+            return arc.isCrossing(this.mouseMovement);
+        })
 
         if (potentialPlacesToDelete.length + potentialTransitionsToDelete.length === 1) {
             if (potentialPlacesToDelete[0]) {
@@ -170,6 +173,8 @@ class CanvasController extends Component {
             } else if (potentialTransitionsToDelete[0]){
                 this.petriNet.transitions = this.petriNet.transitions.filter(transition => transition !== potentialTransitionsToDelete[0]);
             }
+        } else if (potentialArcsToDelete.length === 1) {
+            this.petriNet.arcs = this.petriNet.arcs.filter(arc => arc !== potentialArcsToDelete[0]);
         }
     }
 
