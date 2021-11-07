@@ -1,6 +1,7 @@
 import {Coordinates, PNElement} from "./petri-net.interfaces";
+import {isSameCoordinates} from "../utils/draw-utils";
 
-export class Mark implements PNElement {
+export class Mark implements PNElement<Mark> {
     position: Coordinates;
     constructor(position:Coordinates) {
         this.position = position;
@@ -14,5 +15,9 @@ export class Mark implements PNElement {
         ctx.stroke();
         ctx.closePath();
         ctx.fillStyle = '#FFF'
+    }
+
+    equals(mark: Mark): boolean {
+        return isSameCoordinates(mark.position, this.position);
     }
 }

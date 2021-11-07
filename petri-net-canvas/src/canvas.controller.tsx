@@ -57,11 +57,11 @@ class CanvasController extends Component {
         return Math.abs(x - this.mouseMovement[0]?.x) <  10 && Math.abs(y -this.mouseMovement[0]?.y) < 10;
     }
 
-    private isWithin(coordinates: Coordinates, nodes: PNNode[]): PNNode | undefined {
+    private isWithin(coordinates: Coordinates, nodes: PNNode<any>[]): PNNode<any> | undefined {
         return nodes.find(node => node.isWithin(coordinates));
     }
 
-    private detectArc(): { start: PNNode, end?: PNNode } | null{
+    private detectArc(): { start: PNNode<any>, end?: PNNode<any> } | null{
         const startWithinPlace = this.isWithin(this.mouseMovement[0], this.petriNet.places);
         const startWithinTransition = this.isWithin(this.mouseMovement[0], this.petriNet.transitions);
         const endsWithinPlace = this.isWithin(this.mouseMovement[this.mouseMovement.length -1], this.petriNet.places);
@@ -162,7 +162,13 @@ class CanvasController extends Component {
                             this.mouseMovement.filter(move => {
                                 return !(arcParameters.start.isWithin(move) || arcParameters.end?.isWithin(move));
                             });
-                        this.petriNet.arcs.push(new Arc( arcParameters.start, arcParameters.end, filteredMovements));
+                        const newArc = new Arc( arcParameters.start, arcParameters.end, filteredMovements)
+                        const sameArc = this.petriNet.arcs.find(arc => arc.equals(newArc));
+                        if(!sameArc){
+                            this.petriNet.arcs.push(newArc);
+                        } else {
+                            sameArc.weight ++;
+                        }
                     }
                     break;
                 case Shape.MARK:

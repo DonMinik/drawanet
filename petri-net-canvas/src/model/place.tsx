@@ -1,8 +1,8 @@
 import {Coordinates, PNNode} from "./petri-net.interfaces";
 import {Mark} from "./mark";
-import {lengthOfLine} from "../utils/draw-utils";
+import {isSameCoordinates, lengthOfLine} from "../utils/draw-utils";
 
-export class Place implements PNNode{
+export class Place implements PNNode<Place>{
 
     centerCoordinates: Coordinates;
     radius: number;
@@ -43,7 +43,7 @@ export class Place implements PNNode{
     }
 
     equals(place: Place): boolean {
-        return place.radius === this.radius && place.centerCoordinates === this.centerCoordinates;
+        return place.radius === this.radius && isSameCoordinates(place.centerCoordinates, this.centerCoordinates);
     }
 
     addMark (mark: Mark) {

@@ -1,12 +1,11 @@
 import {Coordinates, PNElement, PNNode} from "./petri-net.interfaces";
 import {lengthOfLine, middleOfLine} from "../utils/draw-utils";
-
-export class Arc implements PNElement {
+export class Arc implements PNElement<Arc> {
     path: Coordinates[];
     weight = 1;
 
 
-    constructor(private start:PNNode, private end: PNNode, path: Coordinates[]) {
+    constructor(private start:PNNode<any>, private end: PNNode<any>, path: Coordinates[]) {
         this.path = Arc.reducePath(path);
     }
 
@@ -40,16 +39,21 @@ export class Arc implements PNElement {
 
         ctx.moveTo(startCoordinates.x, startCoordinates.y);
         this.path.forEach(point =>  ctx.lineTo(point.x, point.y));
-        const middleOfPath = this.path[Math.floor(this.path.length / 2)];
-        const weightTextPosition = middleOfPath ? middleOfPath : middleOfLine(startCoordinates, endCoordinates);
-        ctx.strokeText(String(this.weight), weightTextPosition.x, weightTextPosition.y);
+        if(this.weight > 1) {
+            const middleOfPath = this.path[Math.floor(this.path.length / 2)];
+            const weightTextPosition = middleOfPath ? middleOfPath : middleOfLine(startCoordinates, endCoordinates);
+            ctx.strokeText(String(this.weight), weightTextPosition.x, weightTextPosition.y);
+        }
         ctx.lineTo(endCoordinates.x, endCoordinates.y)
-
         const angle = Math.atan2( endCoordinates.y - last.y, endCoordinates.x - last.x);
         ctx.lineTo(endCoordinates.x - 10 * Math.cos(angle - Math.PI / 6), endCoordinates.y - 10 * Math.sin(angle - Math.PI / 6));
         ctx.moveTo(endCoordinates.x, endCoordinates.y);
         ctx.lineTo(endCoordinates.x - 10 * Math.cos(angle + Math.PI / 6), endCoordinates.y - 10 * Math.sin(angle + Math.PI / 6));
         ctx.stroke();
         ctx.closePath();
+    }
+
+    equals(arc: Arc) {
+        return arc.start.equals(this.start) && arc.end.equals(this.end);
     }
 }

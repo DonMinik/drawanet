@@ -1,7 +1,7 @@
 import {Coordinates, PNNode} from "./petri-net.interfaces";
-import {isWithinRect, lengthOfLine} from "../utils/draw-utils";
+import {isSameCoordinates, isWithinRect, lengthOfLine} from "../utils/draw-utils";
 
-export class Transition implements PNNode {
+export class Transition implements PNNode<Transition> {
 
     maxCoordinates: Coordinates;
     startCoordinates: Coordinates;
@@ -46,4 +46,7 @@ export class Transition implements PNNode {
                 current : prev);
     }
 
+    equals(transition: Transition): boolean {
+        return isSameCoordinates(transition.startCoordinates, this.startCoordinates) && isSameCoordinates(transition.maxCoordinates, this.maxCoordinates);
+    }
 }

@@ -8,11 +8,12 @@ export interface PetriNet {
     arcs: Arc[]
 }
 
-export interface PNElement {
+export interface PNElement<T> {
     draw: (ctx: CanvasRenderingContext2D) => void;
+    equals: (e: T) => boolean;
 }
 
-export interface PNNode extends PNElement {
+export interface PNNode<T> extends PNElement<T> {
     isWithin: (coordinates: Coordinates) => boolean,
     closestTouchPoint: (coordinates: Coordinates) => Coordinates
     centerCoordinates: Coordinates;
