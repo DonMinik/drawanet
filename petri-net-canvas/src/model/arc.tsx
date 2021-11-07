@@ -21,7 +21,6 @@ export class Arc implements PNElement {
                 reducedPath.push(path[i-1]);
             }
         }
-        console.log('reduced path', reducedPath)
         return reducedPath;
     }
 
@@ -29,7 +28,6 @@ export class Arc implements PNElement {
         const startToEnd = lengthOfLine(start, end);
         const relativeDistance = (lengthOfLine(start, middle) + lengthOfLine(end, middle)) / startToEnd;
         const deviationFactor = 1 + startToEnd / 100;
-        console.log('relative distance', relativeDistance, 'deviationFactor', deviationFactor);
         return relativeDistance > deviationFactor;
     }
 
