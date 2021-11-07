@@ -32,8 +32,7 @@ export class Place implements PNNode<Place>{
         if (!coordinates) {
             return false;
         }
-        return Math.sqrt((coordinates.x-this.centerCoordinates.x)*(coordinates.x-this.centerCoordinates.x) + (coordinates.y-this.centerCoordinates.y)*(coordinates.y-this.centerCoordinates.y)) < this.radius
-      //  return Math.abs(coordinates.x - this.centerCoordinates.x) <= this.radius && Math.abs(coordinates.x - this.centerCoordinates.x) <= this.radius;
+        return Math.sqrt((coordinates.x-this.centerCoordinates.x)*(coordinates.x-this.centerCoordinates.x) + (coordinates.y-this.centerCoordinates.y)*(coordinates.y-this.centerCoordinates.y)) < this.radius;
     }
 
     closestTouchPoint(coordinates: Coordinates): Coordinates {

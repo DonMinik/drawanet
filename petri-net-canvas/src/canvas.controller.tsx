@@ -126,6 +126,37 @@ class CanvasController extends Component {
             }
         }
     }
+    private addArc(arcParameters: { start: PNNode<any>; end?: PNNode<any> } | null) {
+        if (arcParameters && arcParameters.end) {
+            const filteredMovements =
+                this.mouseMovement.filter(move => {
+                    return !(arcParameters.start.isWithin(move) || arcParameters.end?.isWithin(move));
+                });
+            const newArc = new Arc(arcParameters.start, arcParameters.end, filteredMovements)
+            const sameArc = this.petriNet.arcs.find(arc => arc.equals(newArc));
+            if (!sameArc) {
+                this.petriNet.arcs.push(newArc);
+            } else {
+                sameArc.weight++;
+            }
+        }
+    }
+
+    private checkForDeleteMovement() {
+        const start = this.mouseMovement[0];
+        const end = this.mouseMovement[this.mouseMovement.length -1];
+        const potentialPlacesToDelete = this.petriNet.places.filter(place => {
+           const startsAndEndsOutside =  !place.isWithin(start) && !place.isWithin(end);
+           console.log(start, place.isWithin(start), end, place.isWithin(end))
+            console.log('startsAndEndsOutside', startsAndEndsOutside)
+           const crossesPlace = this.mouseMovement.filter(move => place.isWithin(move)).length > 0;
+            console.log('crossesPlace', crossesPlace, this.mouseMovement.filter(move => place.isWithin(move)))
+            return startsAndEndsOutside && crossesPlace;
+        })
+        if (potentialPlacesToDelete.length === 1) {
+            this.petriNet.places = this.petriNet.places.filter(place => place !== potentialPlacesToDelete[0])
+        }
+    }
 
     onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
         this.isDrawElement = true;
@@ -146,37 +177,25 @@ class CanvasController extends Component {
             this.detectPlaceOrTransition();
         }
 
-        if (this.complete) {
-
-            switch (this.detectedShape) {
-                case Shape.PLACE:
-                    const circleProps = this.circleProperties;
-                    this.petriNet.places.push(new Place(circleProps.centerCoordinates, circleProps.radius));
-                    break;
-                case Shape.TRANSITION:
-                    this.petriNet.transitions.push(new Transition(this.mouseMovement[0], this.maxDistance));
-                    break;
-                case Shape.ARC:
-                    if (arcParameters && arcParameters.end) {
-                        const filteredMovements =
-                            this.mouseMovement.filter(move => {
-                                return !(arcParameters.start.isWithin(move) || arcParameters.end?.isWithin(move));
-                            });
-                        const newArc = new Arc( arcParameters.start, arcParameters.end, filteredMovements)
-                        const sameArc = this.petriNet.arcs.find(arc => arc.equals(newArc));
-                        if(!sameArc){
-                            this.petriNet.arcs.push(newArc);
-                        } else {
-                            sameArc.weight ++;
-                        }
-                    }
-                    break;
-                case Shape.MARK:
-                    const mark = new Mark(this.mouseMovement[0] ? this.mouseMovement[0] : {x:event.clientX, y:event.clientY});
-                    (arcParameters?.start as Place).addMark(mark);
-                    break;
-            }
+        switch (this.detectedShape) {
+            case Shape.PLACE:
+                const circleProps = this.circleProperties;
+                this.petriNet.places.push(new Place(circleProps.centerCoordinates, circleProps.radius));
+                break;
+            case Shape.TRANSITION:
+                this.petriNet.transitions.push(new Transition(this.mouseMovement[0], this.maxDistance));
+                break;
+            case Shape.ARC:
+                this.addArc(arcParameters);
+                break;
+            case Shape.MARK:
+                const mark = new Mark(this.mouseMovement[0] ? this.mouseMovement[0] : {x:event.clientX, y:event.clientY});
+                (arcParameters?.start as Place).addMark(mark);
+                break;
+            case Shape.UNDEFINED:
+                this.checkForDeleteMovement();
         }
+
         this.reset();
         this.paintNet();
     }
