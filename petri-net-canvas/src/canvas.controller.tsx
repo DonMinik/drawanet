@@ -142,19 +142,34 @@ class CanvasController extends Component {
         }
     }
 
-    private checkForDeleteMovement() {
+    private determinePotentialNodesToDelete(nodes :PNNode<any>[]) {
         const start = this.mouseMovement[0];
         const end = this.mouseMovement[this.mouseMovement.length -1];
-        const potentialPlacesToDelete = this.petriNet.places.filter(place => {
-           const startsAndEndsOutside =  !place.isWithin(start) && !place.isWithin(end);
-           console.log(start, place.isWithin(start), end, place.isWithin(end))
-            console.log('startsAndEndsOutside', startsAndEndsOutside)
-           const crossesPlace = this.mouseMovement.filter(move => place.isWithin(move)).length > 0;
-            console.log('crossesPlace', crossesPlace, this.mouseMovement.filter(move => place.isWithin(move)))
+
+        return nodes.filter(node => {
+            const startsAndEndsOutside =  !node.isWithin(start) && !node.isWithin(end);
+            const crossesPlace = this.mouseMovement.filter(move => node.isWithin(move)).length > 0;
             return startsAndEndsOutside && crossesPlace;
-        })
-        if (potentialPlacesToDelete.length === 1) {
-            this.petriNet.places = this.petriNet.places.filter(place => place !== potentialPlacesToDelete[0])
+        });
+    }
+
+    private checkForDeleteMovement() {
+
+
+        //places
+        const potentialPlacesToDelete = this.determinePotentialNodesToDelete(this.petriNet.places);
+
+        //transitions
+        const potentialTransitionsToDelete = this.determinePotentialNodesToDelete(this.petriNet.transitions);
+
+
+
+        if (potentialPlacesToDelete.length + potentialTransitionsToDelete.length === 1) {
+            if (potentialPlacesToDelete[0]) {
+                this.petriNet.places = this.petriNet.places.filter(place => place !== potentialPlacesToDelete[0]);
+            } else if (potentialTransitionsToDelete[0]){
+                this.petriNet.transitions = this.petriNet.transitions.filter(transition => transition !== potentialTransitionsToDelete[0]);
+            }
         }
     }
 
