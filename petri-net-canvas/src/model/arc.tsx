@@ -17,15 +17,20 @@ export class Arc implements PNElement {
             if (i < 2) {
                 continue;
             }
-            if(Arc.determineRelativeDistance(path[i-2], path[i-1], path[i]) > 1.1){
+            if(Arc.isCurve(path[i-2], path[i-1], path[i])){
                 reducedPath.push(path[i-1]);
             }
         }
+        console.log('reduced path', reducedPath)
         return reducedPath;
     }
 
-    private static determineRelativeDistance(start: Coordinates, middle: Coordinates, end: Coordinates) {
-          return (lengthOfLine(start, middle) + lengthOfLine(end, middle)) / lengthOfLine(start, end);
+    private static isCurve(start: Coordinates, middle: Coordinates, end: Coordinates): boolean {
+        const startToEnd = lengthOfLine(start, end);
+        const relativeDistance = (lengthOfLine(start, middle) + lengthOfLine(end, middle)) / startToEnd;
+        const deviationFactor = 1 + startToEnd / 100;
+        console.log('relative distance', relativeDistance, 'deviationFactor', deviationFactor);
+        return relativeDistance > deviationFactor;
     }
 
     draw(ctx: CanvasRenderingContext2D) {
