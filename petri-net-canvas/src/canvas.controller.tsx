@@ -174,6 +174,9 @@ class CanvasController extends Component {
             } else if (potentialTransitionsToDelete[0]){
                 this.petriNet.transitions = this.petriNet.transitions.filter(transition => transition !== potentialTransitionsToDelete[0]);
             }
+            this.petriNet.arcs = this.petriNet.arcs.filter(arc => {
+                return potentialPlacesToDelete[0] !==  arc.start && potentialPlacesToDelete[0] !== arc.end && potentialTransitionsToDelete[0] != arc.start && potentialTransitionsToDelete[0] != arc.end;
+            });
         } else if (potentialArcsToDelete.length === 1) {
             if (potentialArcsToDelete[0].weight > 1) {
                 potentialArcsToDelete[0].weight --;

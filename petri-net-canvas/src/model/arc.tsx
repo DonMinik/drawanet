@@ -7,7 +7,7 @@ export class Arc implements PNElement<Arc> {
     endCoordinates: Coordinates;
 
 
-    constructor(private start:PNNode<any>, private end: PNNode<any>, path: Coordinates[]) {
+    constructor(public start:PNNode<any>, public end: PNNode<any>, path: Coordinates[]) {
         this.path = Arc.reducePath(path);
         this.startCoordinates = this.start.closestTouchPoint(this.path[0] ? this.path[0] : this.end.centerCoordinates);
         this.endCoordinates = this.end.closestTouchPoint(this.path[this.path.length -1] ? this.path[this.path.length -1]: this.start.centerCoordinates);
