@@ -167,6 +167,7 @@ class CanvasController extends Component {
             return arc.isCrossing(this.mouseMovement);
         })
 
+
         if (potentialPlacesToDelete.length + potentialTransitionsToDelete.length === 1) {
             if (potentialPlacesToDelete[0]) {
                 this.petriNet.places = this.petriNet.places.filter(place => place !== potentialPlacesToDelete[0]);

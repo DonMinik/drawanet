@@ -15,6 +15,13 @@ export function isWithinRect(coordinatesToCheck: Coordinates, rectCornerA: Coord
         coordinatesToCheck.y > smallestY &&
         coordinatesToCheck.y < highestY;
 }
+export function isWithinCircle(coordinatesToCheck: Coordinates, center: Coordinates, radius: number){
+    if (!coordinatesToCheck || !center || !radius) {
+        return false;
+    }
+    return Math.sqrt((coordinatesToCheck.x-center.x)*(coordinatesToCheck.x-center.x) + (coordinatesToCheck.y-center.y)*(coordinatesToCheck.y-center.y)) < radius;
+
+}
 
 export function getAngle(a: Coordinates, b: Coordinates){
     return Math.atan2(b.y - a.y, b.x - a.x);
