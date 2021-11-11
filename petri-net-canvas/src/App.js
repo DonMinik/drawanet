@@ -1,12 +1,15 @@
-import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-import CanvasController from "./canvas.controller";
+import CanvasComponent from "./components/canvas.component";
+import TextCanvasComponent from "./components/text-canvas.component";
 
 function App() {
   return (
     <div className="App">
-        <CanvasController/>
+        <main className="App-main">
+            <CanvasComponent/>
+            <TextCanvasComponent/>
+        </main>
     </div>
   );
 }

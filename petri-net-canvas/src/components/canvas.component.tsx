@@ -1,11 +1,14 @@
 import React, {Component} from "react";
-import {Coordinates, PetriNet, PNNode} from "./model/petri-net.interfaces";
-import {Place} from "./model/place";
-import {Transition} from "./model/transition";
-import {Arc} from "./model/arc";
-import {Mark} from "./model/mark";
+import {Coordinates, PetriNet, PNNode} from "../model/petri-net.interfaces";
+import {Place} from "../model/place";
+import {Transition} from "../model/transition";
+import {Arc} from "../model/arc";
+import {Mark} from "../model/mark";
 
-class CanvasController extends Component {
+/**
+ * todo: use base component
+ */
+class CanvasComponent extends Component {
     private isDrawElement = false;
     private petriNet: PetriNet;
     private initialized = false;
@@ -196,7 +199,15 @@ class CanvasController extends Component {
         });
         this.canvasCtx.beginPath();
         this.canvasCtx.moveTo(event.clientX, event.clientY);
+    }
 
+    onMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
+        if(this.isDrawElement) {
+            this.mouseMovement.push({x: event.clientX, y:event.clientY});
+
+            this.canvasCtx.lineTo(event.clientX , event.clientY);
+            this.canvasCtx.stroke();
+        }
     }
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
@@ -230,15 +241,6 @@ class CanvasController extends Component {
         this.paintNet();
     }
 
-    onMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
-        if(this.isDrawElement) {
-            this.mouseMovement.push({x: event.clientX, y:event.clientY});
-
-            this.canvasCtx.lineTo(event.clientX , event.clientY);
-            this.canvasCtx.stroke();
-        }
-    }
-
     render() {
         return(<div>
             <canvas    ref={this.canvasRef}
@@ -265,5 +267,5 @@ interface CircleProperties {
     radius: number
 }
 
-export default CanvasController;
+export default CanvasComponent;
 
