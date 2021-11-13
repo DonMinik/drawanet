@@ -1,23 +1,24 @@
-import React, {Component} from "react";
+import React from "react";
 import {Coordinates, PetriNet, PNNode} from "../model/petri-net.interfaces";
 import {Place} from "../model/place";
 import {Transition} from "../model/transition";
 import {Arc} from "../model/arc";
 import {Mark} from "../model/mark";
+import {BaseCanvasComponent} from "./base-canvas.component";
 
 /**
  * todo: use base component
  */
-class CanvasComponent extends Component {
-    private isDrawElement = false;
+class CanvasComponent extends BaseCanvasComponent<any, any> {
+ //   private isDrawElement = false;
     private petriNet: PetriNet;
     private initialized = false;
     private detectedShape = Shape.UNDEFINED;
     private complete = false;
 
-    private mouseMovement: Coordinates[] = [];
+   // private mouseMovement: Coordinates[] = [];
 
-    canvasRef: any;
+   // canvasRef: any;
     constructor(props: any) {
         super(props);
         this.canvasRef = React.createRef();
@@ -28,7 +29,7 @@ class CanvasComponent extends Component {
         }
     }
 
-    private get canvasCtx(): CanvasRenderingContext2D {
+    protected get canvasCtx(): CanvasRenderingContext2D {
         const _ctx = this.canvasRef?.current?.getContext('2d');
         if (!this.initialized) {
             if(_ctx) {
@@ -191,28 +192,29 @@ class CanvasComponent extends Component {
         }
     }
 
-    onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
-        this.isDrawElement = true;
+   /* onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
+      //  this.isDrawElement = true;
         this.mouseMovement.push(  {
             x: event.clientX,
             y: event.clientY
         });
         this.canvasCtx.beginPath();
         this.canvasCtx.moveTo(event.clientX, event.clientY);
-    }
+    } */
 
-    onMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
+ /*   onMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
         if(this.isDrawElement) {
             this.mouseMovement.push({x: event.clientX, y:event.clientY});
 
             this.canvasCtx.lineTo(event.clientX , event.clientY);
             this.canvasCtx.stroke();
         }
-    }
+    } */
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
-        this.isDrawElement = false;
-        this.canvasCtx.closePath();
+     //   this.isDrawElement = false;
+        super.onMouseUp(event);
+       // this.canvasCtx.closePath();
         const arcParameters = this.detectArc();
         if(!this.complete) {
             this.detectPlaceOrTransition();

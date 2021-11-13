@@ -12,7 +12,7 @@ class TextCanvasComponent extends BaseCanvasComponent <{},{text: string}>{
             text: 'foo'
         }
    }
-    get canvasCtx() {
+    protected get canvasCtx() {
         const _ctx = this.canvasRef?.current?.getContext('2d');
         if (!this.initialized) {
             if(_ctx) {
@@ -28,12 +28,6 @@ class TextCanvasComponent extends BaseCanvasComponent <{},{text: string}>{
     }
 
     onClick(e: React.MouseEvent<HTMLButtonElement>) {
-        this.recognizeWriting();
-    }
-
-
-    private recognizeWriting(){
-        const canvas: HTMLCanvasElement = this.canvasRef?.current;
         TextDetectionService.detectText(this.canvasRef.current).then(
             text =>  {
                 debugger
@@ -41,12 +35,11 @@ class TextCanvasComponent extends BaseCanvasComponent <{},{text: string}>{
             }
         )
     }
-
     render() {
         return(<div>
             <canvas className='text-canvas'
                 ref={this.canvasRef}
-                //onClick={e => this.onClick(e)}
+
                       onMouseDown={(e) => this.onMouseDown(e)}
                     onMouseUp={(e) => this.onMouseUp(e)}
                   onMouseMove={(e) => this.onMouseMove(e)}

@@ -48,7 +48,7 @@ export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
 
     }
 
-    abstract get canvasCtx();
+    protected abstract  get canvasCtx();
 
     abstract render();
 }
