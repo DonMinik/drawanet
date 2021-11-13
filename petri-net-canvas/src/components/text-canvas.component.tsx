@@ -4,38 +4,36 @@ import {BaseCanvasComponent} from "./base-canvas.component";
 import {TextDetectionService} from "../services/text-detection.service";
 import {Coordinates} from "../model/petri-net.interfaces";
 
-class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates},{text: string, position: Coordinates}>{
+class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates, callBack: TextCanvasCallBack},{text: string, position: Coordinates}>{
 
-    private recognizedText: Promise<string>;
+    private readonly callBack: TextCanvasCallBack;
 
-    constructor(props: {coordinates: Coordinates}){
+    constructor(props: {coordinates: Coordinates, callback: TextCanvasCallBack}){
         super(props);
         this.state = {
             text: 'foo',
             position: props.coordinates
         }
+        this.callBack = props.callback;
    }
-
 
     onClick() {
         TextDetectionService.detectText(this.canvasRef.current).then(
             text =>  {
                 this.setState({text: text});
-                //todo: reset canvas
-                this.recognizedText = Promise.resolve(text);
+                this.callBack(text);
             }
         )
 
     }
 
     render() {
-        return(<div  >
+        return(<div >
             <canvas className='text-canvas'
                 ref={this.canvasRef}
-                      onMouseDown={(e) => this.onMouseDown(e)}
-                    onMouseUp={(e) => this.onMouseUp(e)}
-                  onMouseMove={(e) => this.onMouseMove(e)}
-
+                onMouseDown={(e) => this.onMouseDown(e)}
+                onMouseUp={(e) => this.onMouseUp(e)}
+                onMouseMove={(e) => this.onMouseMove(e)}
             />
             <div className='backdrop'/>
             <button onClick={() => this.onClick()}>Done</button>
@@ -63,5 +61,6 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
         canvasStyle.zIndex = String(20);
     }
 }
+export type TextCanvasCallBack = (string) => void ;
 
 export default TextCanvasComponent;

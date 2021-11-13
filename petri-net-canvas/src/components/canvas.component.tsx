@@ -12,7 +12,7 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}
     private petriNet: PetriNet;
     private detectedShape = Shape.UNDEFINED;
     private complete = false;
-    private textCanvas: TextCanvasComponent;
+    private textCanvas: any;
 
     constructor(props: any) {
         super(props);
@@ -183,6 +183,12 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}
         }
     }
 
+    closeTextCanvas(text: string) {
+        this.setState({showTextCanvas: false});
+        alert(text);
+        this.textCanvas = null;
+    }
+
     async onDoubleClick(event: React.MouseEvent<HTMLCanvasElement>) {
         const x = event.clientX -  this.canvasPositionLeft;
         const y = event.clientY - this.canvasPositionTop;
@@ -193,7 +199,7 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}
         }
 
         if(nodeToName) {
-            this.textCanvas = new TextCanvasComponent({coordinates: {x: x, y: y}});
+            this.textCanvas = <TextCanvasComponent coordinates={{x: x, y: y}} callBack={this.closeTextCanvas}/>; //new TextCanvasComponent({coordinates: {x: x, y: y}, callback: this.closeTextCanvas });
             this.setState({showTextCanvas: true});
         }
     }
@@ -239,7 +245,7 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}
                        onDoubleClick={e => this.onDoubleClick(e)}
                        className='canvas'
             />
-            { this.state.showTextCanvas ? this.textCanvas.render() : null}
+            { this.state.showTextCanvas ? this.textCanvas : null}
         </div>);
     }
 }
