@@ -8,13 +8,13 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
 
     private readonly callBack: TextCanvasCallBack;
 
-    constructor(props: {coordinates: Coordinates, callback: TextCanvasCallBack}){
+    constructor(props: {coordinates: Coordinates, callBack: TextCanvasCallBack}){
         super(props);
         this.state = {
             text: 'foo',
             position: props.coordinates
         }
-        this.callBack = props.callback;
+        this.callBack = props.callBack;
    }
 
     onClick() {
@@ -35,9 +35,10 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
                 onMouseUp={(e) => this.onMouseUp(e)}
                 onMouseMove={(e) => this.onMouseMove(e)}
             />
-            <div className='backdrop'/>
-            <button onClick={() => this.onClick()}>Done</button>
-            <span>{this.state.text}</span>
+            <div className='backdrop'>
+                <button onClick={() => this.onClick()}>Done</button>
+                <span>{this.state.text}</span>
+            </div>
         </div>);
     }
 
