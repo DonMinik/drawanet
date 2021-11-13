@@ -4,6 +4,7 @@ import {isSameCoordinates, isWithinCircle, lengthOfLine} from "../utils/draw-uti
 
 export class Place implements PNNode<Place>{
 
+    text: string;
     centerCoordinates: Coordinates;
     radius: number;
     marks: Mark[] = [];
@@ -22,7 +23,6 @@ export class Place implements PNNode<Place>{
     draw(ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
         ctx.arc(this.centerCoordinates.x, this.centerCoordinates.y, this.radius, 0, 2 * Math.PI, false);
-     //   ctx.fill();
         ctx.stroke();
         ctx.closePath();
         this.drawMarks(ctx);

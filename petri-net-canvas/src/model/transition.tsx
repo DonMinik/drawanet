@@ -3,6 +3,7 @@ import {isSameCoordinates, isWithinRect, lengthOfLine} from "../utils/draw-utils
 
 export class Transition implements PNNode<Transition> {
 
+    text: string;
     maxCoordinates: Coordinates;
     startCoordinates: Coordinates;
     touchpoints: Coordinates[] = [];
@@ -31,7 +32,6 @@ export class Transition implements PNNode<Transition> {
 
         ctx.beginPath();
         ctx.rect(x,y,w,h);
-       // ctx.fill();
         ctx.stroke();
         ctx.closePath();
     }

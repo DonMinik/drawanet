@@ -183,10 +183,11 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}
         }
     }
 
-    closeTextCanvas(text: string) {
+    closeTextCanvas(text: string, node: PNNode<any>) {
         this.setState({showTextCanvas: false});
-        alert(text);
+        node.text = text;
         this.textCanvas = null;
+        console.log('recognized ', text, ' now close overlay', this.state.showTextCanvas);
     }
 
     async onDoubleClick(event: React.MouseEvent<HTMLCanvasElement>) {
@@ -197,9 +198,8 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}
         if(!nodeToName) {
             nodeToName = this.petriNet.places.find(place => place.isWithin({x: x, y:y}));
         }
-
         if(nodeToName) {
-            this.textCanvas = <TextCanvasComponent coordinates={{x: x, y: y}} callBack={this.closeTextCanvas}/>; //new TextCanvasComponent({coordinates: {x: x, y: y}, callback: this.closeTextCanvas });
+            this.textCanvas = <TextCanvasComponent coordinates={{x: x, y: y}} callBack={this.closeTextCanvas} node={nodeToName}/>; //new TextCanvasComponent({coordinates: {x: x, y: y}, callback: this.closeTextCanvas });
             this.setState({showTextCanvas: true});
         }
     }
@@ -245,7 +245,7 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}
                        onDoubleClick={e => this.onDoubleClick(e)}
                        className='canvas'
             />
-            { this.state.showTextCanvas ? this.textCanvas : null}
+            { this.state.showTextCanvas ? this.textCanvas : <div/>}
         </div>);
     }
 }

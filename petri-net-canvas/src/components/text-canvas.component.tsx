@@ -2,26 +2,28 @@ import React from "react";
 
 import {BaseCanvasComponent} from "./base-canvas.component";
 import {TextDetectionService} from "../services/text-detection.service";
-import {Coordinates} from "../model/petri-net.interfaces";
+import {Coordinates, PNNode} from "../model/petri-net.interfaces";
 
-class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates, callBack: TextCanvasCallBack},{text: string, position: Coordinates}>{
+class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates, callBack: TextCanvasCallBack, node: PNNode<any>},{text: string, position: Coordinates}>{
 
     private readonly callBack: TextCanvasCallBack;
+    private readonly node: PNNode<any>;
 
-    constructor(props: {coordinates: Coordinates, callBack: TextCanvasCallBack}){
+    constructor(props: {coordinates: Coordinates, callBack: TextCanvasCallBack, node: PNNode<any>}){
         super(props);
         this.state = {
             text: 'foo',
             position: props.coordinates
         }
         this.callBack = props.callBack;
+        this.node = props.node;
    }
 
     onClick() {
         TextDetectionService.detectText(this.canvasRef.current).then(
             text =>  {
                 this.setState({text: text});
-                this.callBack(text);
+                this.callBack(text, this.node);
             }
         )
 
@@ -48,7 +50,7 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
         this.canvasCtx.canvas.width = 400;
         this.canvasCtx.canvas.height = 200;
         this.canvasCtx.strokeStyle = '#FFF';
-        this.canvasCtx.lineWidth = 1;
+        this.canvasCtx.lineWidth = 3;
         this.canvasCtx.fillStyle = '#FFFFFF';
         this.setPosition(this.state.position)
 
@@ -62,6 +64,6 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
         canvasStyle.zIndex = String(20);
     }
 }
-export type TextCanvasCallBack = (string) => void ;
+export type TextCanvasCallBack = (string, PNNode) => void ;
 
 export default TextCanvasComponent;
