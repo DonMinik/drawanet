@@ -61,5 +61,4 @@ export function isLinesCrossing(a: Line, b: Line) {
     }
     return false; // no intercept;
     // code point B end
-
 }

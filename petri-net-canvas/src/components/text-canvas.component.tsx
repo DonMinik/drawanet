@@ -2,55 +2,57 @@ import React from "react";
 
 import {BaseCanvasComponent} from "./base-canvas.component";
 import {TextDetectionService} from "../services/text-detection.service";
+import {Coordinates} from "../model/petri-net.interfaces";
 
-class TextCanvasComponent extends BaseCanvasComponent <{},{text: string}>{
+class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates},{text: string}>{
 
-    private initialized = false;
-    constructor(props: any) {
+    private position: Coordinates;
+    constructor(props: {coordinates: Coordinates}) {
         super(props);
         this.state = {
             text: 'foo'
         }
+        this.position = {x: props.coordinates.x, y: props.coordinates.y}
    }
-    protected get canvasCtx() {
-        const _ctx = this.canvasRef?.current?.getContext('2d');
-        if (!this.initialized) {
-            if(_ctx) {
-                _ctx.canvas.width = 400;
-                _ctx.canvas.height = 200;
-                _ctx.strokeStyle = '#FFF';
-                _ctx.lineWidth = 1;
-                _ctx.fillStyle = '#FFFFFF';
-            }
-            this.initialized = true;
-        }
-        return _ctx;
-    }
 
     onClick(e: React.MouseEvent<HTMLButtonElement>) {
         TextDetectionService.detectText(this.canvasRef.current).then(
             text =>  {
-                debugger
                 this.setState({text: text})
             }
         )
     }
+
     render() {
-        return(<div>
+        return(<div >
             <canvas className='text-canvas'
                 ref={this.canvasRef}
-
                       onMouseDown={(e) => this.onMouseDown(e)}
                     onMouseUp={(e) => this.onMouseUp(e)}
                   onMouseMove={(e) => this.onMouseMove(e)}
 
             />
+            <div className='backdrop'/>
             <button onClick={e => this.onClick(e)}>Done</button>
             <span>{this.state.text}</span>
         </div>);
     }
 
+    componentDidMount() {
+        super.componentDidMount();
 
+        this.canvasCtx.canvas.width = 400;
+        this.canvasCtx.canvas.height = 200;
+        this.canvasCtx.strokeStyle = '#FFF';
+        this.canvasCtx.lineWidth = 1;
+        this.canvasCtx.fillStyle = '#FFFFFF';
+
+        const canvasStyle =   this.canvasRef.current.style;
+        canvasStyle.position = 'absolute';
+        canvasStyle.top = String(this.position.y) + 'px';
+        canvasStyle.left = String(this.position.x) + 'px';
+        canvasStyle.zIndex = String(20);
+    }
 }
 
 export default TextCanvasComponent;

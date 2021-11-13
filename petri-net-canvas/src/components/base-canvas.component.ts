@@ -4,18 +4,19 @@ import {Coordinates} from "../model/petri-net.interfaces";
 export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
     private isDraw = false;
     mouseMovement: Coordinates[] = [];
-    canvasRef: any;
+    canvasRef: React.RefObject<HTMLCanvasElement>;
+    canvasCtx: CanvasRenderingContext2D;
 
     protected constructor(props: any) {
         super(props);
         this.canvasRef = React.createRef();
     }
 
-    private get canvasPositionLeft() {
+    protected get canvasPositionLeft() {
         return this.canvasRef.current.getBoundingClientRect().left;
     }
 
-    private get canvasPositionTop() {
+    protected get canvasPositionTop() {
         return this.canvasRef.current.getBoundingClientRect().top;
     }
 
@@ -48,7 +49,9 @@ export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
 
     }
 
-    protected abstract  get canvasCtx();
+    componentDidMount() {
+        this.canvasCtx = this.canvasRef?.current?.getContext('2d');
+    }
 
     abstract render();
 }

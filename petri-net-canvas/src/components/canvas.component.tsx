@@ -6,19 +6,12 @@ import {Arc} from "../model/arc";
 import {Mark} from "../model/mark";
 import {BaseCanvasComponent} from "./base-canvas.component";
 
-/**
- * todo: use base component
- */
+
 class CanvasComponent extends BaseCanvasComponent<any, any> {
- //   private isDrawElement = false;
     private petriNet: PetriNet;
-    private initialized = false;
     private detectedShape = Shape.UNDEFINED;
     private complete = false;
 
-   // private mouseMovement: Coordinates[] = [];
-
-   // canvasRef: any;
     constructor(props: any) {
         super(props);
         this.canvasRef = React.createRef();
@@ -28,21 +21,17 @@ class CanvasComponent extends BaseCanvasComponent<any, any> {
             transitions: []
         }
     }
+    componentDidMount() {
+        super.componentDidMount();
 
-    protected get canvasCtx(): CanvasRenderingContext2D {
-        const _ctx = this.canvasRef?.current?.getContext('2d');
-        if (!this.initialized) {
-            if(_ctx) {
-                _ctx.canvas.width = _ctx.canvas.clientWidth;
-                _ctx.canvas.height = 400;
-                _ctx.strokeStyle = '#B6DC9E';
-                _ctx.lineWidth = 1;
-                _ctx.fillStyle = '#FFFFFF';
-            }
-            this.initialized = true;
-        }
-        return _ctx;
+        this.canvasCtx.canvas.width = this.canvasCtx.canvas.clientWidth;
+        this.canvasCtx.canvas.height = 400;
+        this.canvasCtx.strokeStyle = '#B6DC9E';
+        this.canvasCtx.lineWidth = 1;
+        this.canvasCtx.fillStyle = '#FFFFFF';
     }
+
+
 
     private reset() {
         this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
@@ -192,29 +181,22 @@ class CanvasComponent extends BaseCanvasComponent<any, any> {
         }
     }
 
-   /* onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
-      //  this.isDrawElement = true;
-        this.mouseMovement.push(  {
-            x: event.clientX,
-            y: event.clientY
-        });
-        this.canvasCtx.beginPath();
-        this.canvasCtx.moveTo(event.clientX, event.clientY);
-    } */
-
- /*   onMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
-        if(this.isDrawElement) {
-            this.mouseMovement.push({x: event.clientX, y:event.clientY});
-
-            this.canvasCtx.lineTo(event.clientX , event.clientY);
-            this.canvasCtx.stroke();
+    onDoubleClick(event: React.MouseEvent<HTMLCanvasElement>) {
+        const x = event.clientX -  this.canvasPositionLeft;
+        const y = event.clientY - this.canvasPositionTop;
+        let nodeToName: PNNode<any>;
+        nodeToName = this.petriNet.transitions.find(transition => transition.isWithin({x: x, y:y}));
+        if(!nodeToName) {
+            nodeToName = this.petriNet.places.find(place => place.isWithin({x: x, y:y}));
         }
-    } */
+
+        if(nodeToName) {
+
+        }
+    }
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
-     //   this.isDrawElement = false;
         super.onMouseUp(event);
-       // this.canvasCtx.closePath();
         const arcParameters = this.detectArc();
         if(!this.complete) {
             this.detectPlaceOrTransition();
@@ -250,6 +232,7 @@ class CanvasComponent extends BaseCanvasComponent<any, any> {
                        onMouseDown={(e) => this.onMouseDown(e)}
                        onMouseUp={(e) => this.onMouseUp(e)}
                        onMouseMove={(e) => this.onMouseMove(e)}
+                       onDoubleClick={e => this.onDoubleClick(e)}
                        className='canvas'
             />
         </div>);
@@ -264,10 +247,10 @@ enum Shape {
     MARK
 }
 
+export default CanvasComponent;
+
+
 interface CircleProperties {
     centerCoordinates: Coordinates,
     radius: number
 }
-
-export default CanvasComponent;
-

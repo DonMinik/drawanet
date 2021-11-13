@@ -8,7 +8,7 @@ function App() {
     <div className="App">
         <main className="App-main">
             <CanvasComponent/>
-            <TextCanvasComponent/>
+          <TextCanvasComponent coordinates={{x: 300, y:200}} />
         </main>
     </div>
   );
