@@ -1,12 +1,8 @@
 import React from "react";
-import Tesseract from 'tesseract.js';
 
 import {BaseCanvasComponent} from "./base-canvas.component";
-/**
- * TODO:
- * -  needs offset
- * - use service
- */
+import {TextDetectionService} from "../services/text-detection.service";
+
 class TextCanvasComponent extends BaseCanvasComponent <{},{text: string}>{
 
     private initialized = false;
@@ -38,54 +34,13 @@ class TextCanvasComponent extends BaseCanvasComponent <{},{text: string}>{
 
     private recognizeWriting(){
         const canvas: HTMLCanvasElement = this.canvasRef?.current;
-        const ctx = canvas.getContext('2d');
-        const src =  ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-        Tesseract.recognize(
-            src,'eng',
-            {
-                logger: m => console.log(m)
+        TextDetectionService.detectText(this.canvasRef.current).then(
+            text =>  {
+                debugger
+                this.setState({text: text})
             }
         )
-            .catch (err => {
-                console.error(err);
-            })
-            .then(result => {
-                // Get Confidence score
-                let confidence = result.confidence
-                // Get full output
-                let text = result.text
-                debugger
-                this.setState({text: text});
-                // setPin(patterns);
-            })
-        /*
-               // @ts-ignore
-                this.textDetectionService.detectText(canvas).then(text =>
-                       this.text = text ? text: '')
-        */
     }
-/*
-    drawImage(url) {
-        const canvas: HTMLCanvasElement = this.canvasRef?.current;
-        let ctx = canvas.getContext('2d')
-        let image = new Image()
-        image.src = url
-        image.crossOrigin = "Anonymous";
-        image.onload = () => {
-            canvas.width = image.width
-            canvas.height = image.height
-            ctx.drawImage(image, 0, 0)
-
-            let src = ctx.getImageData(0, 0, canvas.width, canvas.height)
-
-            Tesseract.recognize(src).progress((p) => {
-                console.log( p.progress);
-            }).then((r) => {
-                this.setState({text: text});
-            })
-        }
-    } */
 
     render() {
         return(<div>
