@@ -1,5 +1,4 @@
-import Tesseract,  from "tesseract.js";
-import preprocessImage from "../utils/preprocess";
+import Tesseract from "tesseract.js";
 
 export class TextDetectionService {
 
@@ -8,13 +7,12 @@ export class TextDetectionService {
     }
 
     async detectText(canvas: HTMLCanvasElement ): Promise<any> {
-        const ctx = canvas.getContext('2d');
 
-        ctx?.putImageData(preprocessImage(canvas),0,0);
-        const dataUrl = canvas.toDataURL("image/jpeg");
+        const ctx = canvas.getContext('2d');
+        const src =  ctx.getImageData(0, 0, canvas.width, canvas.height);
 
         return Tesseract.recognize(
-            dataUrl,'eng',
+            src,'eng',
             {
                 logger: m => console.log(m)
             }
@@ -22,12 +20,14 @@ export class TextDetectionService {
             .catch (err => {
                 console.error(err);
             })
-            .then(result  => {
+            .then(result => {
                 // Get Confidence score
-              //  let confidence = result.confidence
+                let confidence = result.confidence
                 // Get full output
-                let text = result?.data?.text;
-                return result;
+                let text = result.text
+                return text
+                debugger
+               // this.setState({text: text});
                 // setPin(patterns);
             })
     }

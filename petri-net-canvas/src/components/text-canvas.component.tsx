@@ -20,8 +20,8 @@ class TextCanvasComponent extends BaseCanvasComponent <{},{text: string}>{
         const _ctx = this.canvasRef?.current?.getContext('2d');
         if (!this.initialized) {
             if(_ctx) {
-                _ctx.canvas.width = _ctx.canvas.clientWidth;
-                _ctx.canvas.height = 400;
+                _ctx.canvas.width = 400;
+                _ctx.canvas.height = 200;
                 _ctx.strokeStyle = '#FFF';
                 _ctx.lineWidth = 1;
                 _ctx.fillStyle = '#FFFFFF';

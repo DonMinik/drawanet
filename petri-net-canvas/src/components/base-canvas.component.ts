@@ -5,26 +5,39 @@ export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
     private isDraw = false;
     mouseMovement: Coordinates[] = [];
     canvasRef: any;
-    constructor(props: any) {
+
+    protected constructor(props: any) {
         super(props);
         this.canvasRef = React.createRef();
     }
 
+    private get canvasPositionLeft() {
+        return this.canvasRef.current.getBoundingClientRect().left;
+    }
+
+    private get canvasPositionTop() {
+        return this.canvasRef.current.getBoundingClientRect().top;
+    }
+
     onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
+        const x = event.clientX -  this.canvasPositionLeft;
+        const y = event.clientY - this.canvasPositionTop;
         this.isDraw = true;
         this.mouseMovement.push(  {
-            x: event.clientX,
-            y: event.clientY
+            x: x,
+            y: y
         });
         this.canvasCtx.beginPath();
-        this.canvasCtx.moveTo(event.clientX, event.clientY);
+        this.canvasCtx.moveTo(x, y);
     }
 
     onMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
         if(this.isDraw) {
-            this.mouseMovement.push({x: event.clientX, y:event.clientY});
-
-            this.canvasCtx.lineTo(event.clientX , event.clientY);
+            const x = event.clientX - this.canvasPositionLeft ;
+            const y = event.clientY - this.canvasPositionTop;
+            this.mouseMovement.push({x: x, y:y});
+            console.log('moveTo', x, y);
+            this.canvasCtx.lineTo(x , y);
             this.canvasCtx.stroke();
         }
     }
