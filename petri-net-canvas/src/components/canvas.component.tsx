@@ -5,12 +5,14 @@ import {Transition} from "../model/transition";
 import {Arc} from "../model/arc";
 import {Mark} from "../model/mark";
 import {BaseCanvasComponent} from "./base-canvas.component";
+import TextCanvasComponent from "./text-canvas.component";
 
 
-class CanvasComponent extends BaseCanvasComponent<any, any> {
+class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}> {
     private petriNet: PetriNet;
     private detectedShape = Shape.UNDEFINED;
     private complete = false;
+    private textCanvas: TextCanvasComponent;
 
     constructor(props: any) {
         super(props);
@@ -19,6 +21,9 @@ class CanvasComponent extends BaseCanvasComponent<any, any> {
             arcs: [],
             places: [],
             transitions: []
+        }
+        this.state = {
+            showTextCanvas: false
         }
     }
     componentDidMount() {
@@ -147,8 +152,6 @@ class CanvasComponent extends BaseCanvasComponent<any, any> {
     }
 
     private checkForDeleteMovement() {
-
-
         //places
         const potentialPlacesToDelete = this.determinePotentialNodesToDelete(this.petriNet.places);
 
@@ -159,7 +162,6 @@ class CanvasComponent extends BaseCanvasComponent<any, any> {
         const potentialArcsToDelete = this.petriNet.arcs.filter(arc => {
             return arc.isCrossing(this.mouseMovement);
         })
-
 
         if (potentialPlacesToDelete.length + potentialTransitionsToDelete.length === 1) {
             if (potentialPlacesToDelete[0]) {
@@ -181,7 +183,7 @@ class CanvasComponent extends BaseCanvasComponent<any, any> {
         }
     }
 
-    onDoubleClick(event: React.MouseEvent<HTMLCanvasElement>) {
+    async onDoubleClick(event: React.MouseEvent<HTMLCanvasElement>) {
         const x = event.clientX -  this.canvasPositionLeft;
         const y = event.clientY - this.canvasPositionTop;
         let nodeToName: PNNode<any>;
@@ -191,7 +193,8 @@ class CanvasComponent extends BaseCanvasComponent<any, any> {
         }
 
         if(nodeToName) {
-
+            this.textCanvas = new TextCanvasComponent({coordinates: {x: x, y: y}});
+            this.setState({showTextCanvas: true});
         }
     }
 
@@ -225,6 +228,7 @@ class CanvasComponent extends BaseCanvasComponent<any, any> {
         this.paintNet();
     }
 
+
     render() {
         return(<div>
             <canvas    ref={this.canvasRef}
@@ -235,6 +239,7 @@ class CanvasComponent extends BaseCanvasComponent<any, any> {
                        onDoubleClick={e => this.onDoubleClick(e)}
                        className='canvas'
             />
+            { this.state.showTextCanvas ? this.textCanvas.render() : null}
         </div>);
     }
 }

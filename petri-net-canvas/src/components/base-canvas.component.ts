@@ -37,7 +37,6 @@ export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
             const x = event.clientX - this.canvasPositionLeft ;
             const y = event.clientY - this.canvasPositionTop;
             this.mouseMovement.push({x: x, y:y});
-            console.log('moveTo', x, y);
             this.canvasCtx.lineTo(x , y);
             this.canvasCtx.stroke();
         }

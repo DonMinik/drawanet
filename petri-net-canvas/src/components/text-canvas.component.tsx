@@ -4,27 +4,32 @@ import {BaseCanvasComponent} from "./base-canvas.component";
 import {TextDetectionService} from "../services/text-detection.service";
 import {Coordinates} from "../model/petri-net.interfaces";
 
-class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates},{text: string}>{
+class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates},{text: string, position: Coordinates}>{
 
-    private position: Coordinates;
-    constructor(props: {coordinates: Coordinates}) {
+    private recognizedText: Promise<string>;
+
+    constructor(props: {coordinates: Coordinates}){
         super(props);
         this.state = {
-            text: 'foo'
+            text: 'foo',
+            position: props.coordinates
         }
-        this.position = {x: props.coordinates.x, y: props.coordinates.y}
    }
 
-    onClick(e: React.MouseEvent<HTMLButtonElement>) {
+
+    onClick() {
         TextDetectionService.detectText(this.canvasRef.current).then(
             text =>  {
-                this.setState({text: text})
+                this.setState({text: text});
+                //todo: reset canvas
+                this.recognizedText = Promise.resolve(text);
             }
         )
+
     }
 
     render() {
-        return(<div >
+        return(<div  >
             <canvas className='text-canvas'
                 ref={this.canvasRef}
                       onMouseDown={(e) => this.onMouseDown(e)}
@@ -33,7 +38,7 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
 
             />
             <div className='backdrop'/>
-            <button onClick={e => this.onClick(e)}>Done</button>
+            <button onClick={() => this.onClick()}>Done</button>
             <span>{this.state.text}</span>
         </div>);
     }
@@ -46,11 +51,15 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
         this.canvasCtx.strokeStyle = '#FFF';
         this.canvasCtx.lineWidth = 1;
         this.canvasCtx.fillStyle = '#FFFFFF';
+        this.setPosition(this.state.position)
 
-        const canvasStyle =   this.canvasRef.current.style;
+    }
+
+    private setPosition(coordinates: Coordinates){
+        const canvasStyle = this.canvasRef.current.style;
         canvasStyle.position = 'absolute';
-        canvasStyle.top = String(this.position.y) + 'px';
-        canvasStyle.left = String(this.position.x) + 'px';
+        canvasStyle.top = String(coordinates.y) + 'px';
+        canvasStyle.left = String(coordinates.x) + 'px';
         canvasStyle.zIndex = String(20);
     }
 }
