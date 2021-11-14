@@ -1,9 +1,20 @@
 import React, {Component} from "react";
+import {PetriNet} from "../model/petri-net.interfaces";
 
-class DownloadComponent extends Component {
+class DownloadComponent extends Component<{petriNet: PetriNet}, any> {
+
+    constructor(props: {petriNet: PetriNet}) {
+        super(props);
+    }
 
     onClick() {
-
+        const net = this.props.petriNet;
+        console.log('places')
+        net.places.forEach(place => console.log(place));
+        console.log('transitions')
+        net.transitions.forEach(transition => console.log(transition));
+        console.log('arcs')
+        net.arcs.forEach(arc => console.log(arc))
     }
 
     render() {

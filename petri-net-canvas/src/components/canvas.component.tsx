@@ -15,20 +15,16 @@ enum Shape {
     MARK
 }
 
-class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean, toggle: boolean}> {
+class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showTextCanvas: boolean, toggle: boolean}> {
     private petriNet: PetriNet;
     private detectedShape = Shape.UNDEFINED;
     private complete = false;
     private textCanvas: any;
 
-    constructor(props: any) {
+    constructor(props: { petriNet: PetriNet }) {
         super(props);
         this.canvasRef = React.createRef();
-        this.petriNet = {
-            arcs: [],
-            places: [],
-            transitions: []
-        }
+        this.petriNet = props.petriNet;
         this.state = {
             showTextCanvas: false,
             toggle: false
@@ -45,6 +41,9 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean,
         this.canvasCtx.font = '18px Arial';
     }
 
+    get petriNetRef () {
+        return this.petriNet;
+    }
 
 
     private reset() {
