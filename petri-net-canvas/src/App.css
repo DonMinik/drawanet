@@ -1,21 +1,32 @@
 .App {
+  margin: 50px;
+  font-family: 'Courier New',sans-serif;
+}
+
+h1 {
   text-align: center;
+  font-weight: 300!important;
+  font-size: 30px;
+
+  margin-bottom: 50px;
 }
 
-.App-image {
-  width: 60vmin;
-  pointer-events: none;
-}
-
-
-
-.text-box {
-  background: #fff;
-  color: #333;
-  border-radius: 5px;
+h2
+{
   text-align: center;
+  font-weight: 300!important;
+  font-size: 18px;
 }
 
+a, a:visited {
+  color: #0066cc;
+  text-decoration:none;
+}
+
+a:hover {
+  color: #0066cc;
+  text-decoration:underline;
+}
 
 .canvas
 {

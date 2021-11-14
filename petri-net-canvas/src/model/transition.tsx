@@ -25,8 +25,8 @@ export class Transition implements PNNode<Transition> {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        const x = this.startCoordinates.x - ctx.canvas.offsetLeft;
-        const y = this.startCoordinates.y - ctx.canvas.offsetTop;
+        const x = this.startCoordinates.x;
+        const y = this.startCoordinates.y;
         const w = this.maxCoordinates.x - x;
         const h = this.maxCoordinates.y - y;
 
