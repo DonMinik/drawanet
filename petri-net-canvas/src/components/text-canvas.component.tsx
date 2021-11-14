@@ -8,11 +8,13 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
 
     private readonly callBack: TextCanvasCallBack;
     private readonly node: PNNode<any>;
+    private static readonly CANVAS_HEIGHT = 200;
+    private static readonly CANVAS_WIDTH = 400;
 
     constructor(props: {coordinates: Coordinates, callBack: TextCanvasCallBack, node: PNNode<any>}){
         super(props);
         this.state = {
-            text: 'foo',
+            text: '',
             position: props.coordinates
         }
         this.callBack = props.callBack;
@@ -49,20 +51,23 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
     componentDidMount() {
         super.componentDidMount();
 
-        this.canvasCtx.canvas.width = 400;
-        this.canvasCtx.canvas.height = 200;
+        this.canvasCtx.canvas.width = TextCanvasComponent.CANVAS_WIDTH;
+        this.canvasCtx.canvas.height = TextCanvasComponent.CANVAS_HEIGHT;
         this.canvasCtx.strokeStyle = '#FFF';
         this.canvasCtx.lineWidth = 3;
-        this.canvasCtx.fillStyle = '#FFFFFF';
+        this.canvasCtx.fillStyle = '#FFF';
         this.setPosition(this.state.position)
 
     }
 
     private setPosition(coordinates: Coordinates){
+        const x  = coordinates.x + TextCanvasComponent.CANVAS_WIDTH > window.innerWidth ? coordinates.x - TextCanvasComponent.CANVAS_WIDTH : coordinates.x;
+        const y  = coordinates.y + TextCanvasComponent.CANVAS_HEIGHT > window.innerHeight ? coordinates.y - TextCanvasComponent.CANVAS_HEIGHT : coordinates.y;
+
         const canvasStyle = this.canvasRef.current.style;
         canvasStyle.position = 'absolute';
-        canvasStyle.top = String(coordinates.y) + 'px';
-        canvasStyle.left = String(coordinates.x) + 'px';
+        canvasStyle.top = String(y) + 'px';
+        canvasStyle.left = String(x) + 'px';
         canvasStyle.zIndex = String(20);
     }
 }
