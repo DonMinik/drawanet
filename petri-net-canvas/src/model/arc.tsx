@@ -1,10 +1,10 @@
 import {Coordinates, PNElement, PNNode} from "./petri-net.interfaces";
 import {isLinesCrossing, lengthOfLine, middleOfLine} from "../utils/draw-utils";
 export class Arc implements PNElement<Arc> {
-    path: Coordinates[];
     weight = 1;
-    startCoordinates: Coordinates;
-    endCoordinates: Coordinates;
+    private readonly path: Coordinates[];
+    private readonly startCoordinates: Coordinates;
+    private readonly endCoordinates: Coordinates;
 
 
     constructor(public start:PNNode<any>, public end: PNNode<any>, path: Coordinates[]) {

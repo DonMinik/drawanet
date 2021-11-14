@@ -35,6 +35,13 @@ export function middleOfLine(a:Coordinates, b: Coordinates): Coordinates {
 export function isSameCoordinates(a: Coordinates, b:Coordinates): boolean {
     return a && b && a.x === b.x && a.y === b.y;
 }
+export function drawText(ctx: CanvasRenderingContext2D, text: string, position: Coordinates) {
+    if (text?.length > 0) {
+        ctx.fillStyle = '#000';
+        ctx.fillText(text, position.x, position.y);
+        ctx.fillStyle = '#FFF';
+    }
+}
 
 /**
  * inspired by https://riptutorial.com/html5-canvas/example/17708/are-2-line-segments-intercepting-

@@ -22,8 +22,10 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
     onClick() {
         TextDetectionService.detectText(this.canvasRef.current).then(
             text =>  {
+                console.log('recognized text', text);
+                this.node.text = text;
                 this.setState({text: text});
-                this.callBack(text, this.node);
+                this.callBack();
             }
         )
 
@@ -38,7 +40,7 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
                 onMouseMove={(e) => this.onMouseMove(e)}
             />
             <div className='backdrop'>
-                <button onClick={() => this.onClick()}>Done</button>
+                <button onClick={() => this.onClick()} >Done</button>
                 <span>{this.state.text}</span>
             </div>
         </div>);
@@ -64,6 +66,6 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
         canvasStyle.zIndex = String(20);
     }
 }
-export type TextCanvasCallBack = (string, PNNode) => void ;
+export type TextCanvasCallBack = () => void ;
 
 export default TextCanvasComponent;

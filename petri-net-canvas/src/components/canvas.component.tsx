@@ -8,7 +8,7 @@ import {BaseCanvasComponent} from "./base-canvas.component";
 import TextCanvasComponent from "./text-canvas.component";
 
 
-class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}> {
+class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean, toggle: boolean}> {
     private petriNet: PetriNet;
     private detectedShape = Shape.UNDEFINED;
     private complete = false;
@@ -23,17 +23,19 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}
             transitions: []
         }
         this.state = {
-            showTextCanvas: false
+            showTextCanvas: false,
+            toggle: false
         }
     }
     componentDidMount() {
         super.componentDidMount();
-
         this.canvasCtx.canvas.width = this.canvasCtx.canvas.clientWidth;
         this.canvasCtx.canvas.height = 400;
         this.canvasCtx.strokeStyle = '#B6DC9E';
         this.canvasCtx.lineWidth = 1;
         this.canvasCtx.fillStyle = '#FFFFFF';
+        this.canvasCtx.textAlign = 'center';
+        this.canvasCtx.font = '18px Arial';
     }
 
 
@@ -183,11 +185,10 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}
         }
     }
 
-    closeTextCanvas(text: string, node: PNNode<any>) {
+    closeTextCanvas() {
         this.setState({showTextCanvas: false});
-        node.text = text;
-        this.textCanvas = null;
-        console.log('recognized ', text, ' now close overlay', this.state.showTextCanvas);
+        this.reset();
+        this.paintNet();
     }
 
     async onDoubleClick(event: React.MouseEvent<HTMLCanvasElement>) {
@@ -199,7 +200,7 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}
             nodeToName = this.petriNet.places.find(place => place.isWithin({x: x, y:y}));
         }
         if(nodeToName) {
-            this.textCanvas = <TextCanvasComponent coordinates={{x: x, y: y}} callBack={this.closeTextCanvas} node={nodeToName}/>; //new TextCanvasComponent({coordinates: {x: x, y: y}, callback: this.closeTextCanvas });
+            this.textCanvas = <TextCanvasComponent coordinates={{x: x, y: y}} callBack={() => this.closeTextCanvas()} node={nodeToName}/>; //new TextCanvasComponent({coordinates: {x: x, y: y}, callback: this.closeTextCanvas });
             this.setState({showTextCanvas: true});
         }
     }
@@ -234,20 +235,27 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean}
         this.paintNet();
     }
 
+    count = 0;
+    A = <span>A</span>;
+    B = <span>V</span>;
 
     render() {
+         this.count ++;
         return(<div>
             <canvas    ref={this.canvasRef}
-
-                       onMouseDown={(e) => this.onMouseDown(e)}
-                       onMouseUp={(e) => this.onMouseUp(e)}
-                       onMouseMove={(e) => this.onMouseMove(e)}
-                       onDoubleClick={e => this.onDoubleClick(e)}
-                       className='canvas'
+               onMouseDown={(e) => this.onMouseDown(e)}
+               onMouseUp={(e) => this.onMouseUp(e)}
+               onMouseMove={(e) => this.onMouseMove(e)}
+               onDoubleClick={e => this.onDoubleClick(e)}
+               className='canvas'
             />
-            { this.state.showTextCanvas ? this.textCanvas : <div/>}
+            { this.state.showTextCanvas ? this.textCanvas
+                : null
+            }
         </div>);
     }
+
+
 }
 
 enum Shape {

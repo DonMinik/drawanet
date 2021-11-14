@@ -1,20 +1,20 @@
 import {Coordinates, PNNode} from "./petri-net.interfaces";
-import {isSameCoordinates, isWithinRect, lengthOfLine} from "../utils/draw-utils";
+import {drawText, isSameCoordinates, isWithinRect, lengthOfLine} from "../utils/draw-utils";
 
 export class Transition implements PNNode<Transition> {
 
     text: string;
-    maxCoordinates: Coordinates;
-    startCoordinates: Coordinates;
-    touchpoints: Coordinates[] = [];
+    private readonly maxCoordinates: Coordinates;
+    private readonly startCoordinates: Coordinates;
+    private readonly touchPoints: Coordinates[] = [];
 
     constructor(start: Coordinates, max:Coordinates) {
         this.startCoordinates = start;
         this.maxCoordinates = max;
-        this.touchpoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.startCoordinates.y});
-        this.touchpoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.maxCoordinates.y});
-        this.touchpoints.push({x: this.startCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
-        this.touchpoints.push({x: this.maxCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
+        this.touchPoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.startCoordinates.y});
+        this.touchPoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.maxCoordinates.y});
+        this.touchPoints.push({x: this.startCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
+        this.touchPoints.push({x: this.maxCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
     }
 
     get centerCoordinates(): Coordinates {
@@ -34,6 +34,7 @@ export class Transition implements PNNode<Transition> {
         ctx.rect(x,y,w,h);
         ctx.stroke();
         ctx.closePath();
+        drawText(ctx, this.text, this.centerCoordinates);
     }
 
     isWithin(coordinates: Coordinates): boolean {
@@ -41,7 +42,7 @@ export class Transition implements PNNode<Transition> {
     }
 
     closestTouchPoint(coordinates: Coordinates): Coordinates {
-        return this.touchpoints.reduce((prev, current) =>
+        return this.touchPoints.reduce((prev, current) =>
             (lengthOfLine(current,coordinates) < lengthOfLine(prev, coordinates)) ?
                 current : prev);
     }
