@@ -199,7 +199,7 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean,
     }
 
     async onDoubleClick(event: React.MouseEvent<HTMLCanvasElement>) {
-        const x = event.clientX -  this.canvasPositionLeft;
+        const x = event.clientX - this.canvasPositionLeft;
         const y = event.clientY - this.canvasPositionTop;
         let nodeToName: PNNode<any>;
         nodeToName = this.petriNet.transitions.find(transition => transition.isWithin({x: x, y:y}));
@@ -231,7 +231,8 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean,
                 this.addArc(arcParameters);
                 break;
             case Shape.MARK:
-                const mark = new Mark(this.mouseMovement[0] ? this.mouseMovement[0] : {x:event.clientX, y:event.clientY});
+                const mark = new Mark(this.mouseMovement[0] ? this.mouseMovement[0]
+                    : {x:event.clientX - this.canvasPositionLeft, y:event.clientY - this.canvasPositionTop});
                 (arcParameters?.start as Place).addMark(mark);
                 break;
             case Shape.UNDEFINED:
@@ -261,13 +262,9 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean,
             }
         </div>);
     }
-
-
 }
 
-
 export default CanvasComponent;
-
 
 interface CircleProperties {
     centerCoordinates: Coordinates,
