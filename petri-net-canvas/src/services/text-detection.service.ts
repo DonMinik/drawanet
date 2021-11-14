@@ -15,7 +15,7 @@ export class TextDetectionService {
             .catch (err => {
                 console.error(err);
             });
-        return result.text
+        return result.text?.trim()
     }
 }
 

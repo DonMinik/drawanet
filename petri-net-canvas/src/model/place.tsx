@@ -6,18 +6,23 @@ export class Place implements PNNode<Place>{
 
     text: string;
     marks: Mark[] = [];
+    readonly index: number;
     readonly centerCoordinates: Coordinates;
     private readonly radius: number;
     private readonly touchPoints: Coordinates[] = [];
 
-    constructor(center: Coordinates, radius: number) {
+    constructor(center: Coordinates, radius: number, index: number) {
         this.centerCoordinates = center;
         this.radius = radius;
         this.touchPoints.push({x: center.x + radius, y: center.y}); // right
         this.touchPoints.push({x: center.x - radius, y: center.y}); // left
         this.touchPoints.push({x: center.x, y: center.y + radius}); // bottom
         this.touchPoints.push({x: center.x, y: center.y - radius}); // top
+        this.index = index;
+    }
 
+    get exportName(): string {
+        return this.text?.length > 0 ? this.text : 'p' + this.index;
     }
 
     draw(ctx: CanvasRenderingContext2D) {

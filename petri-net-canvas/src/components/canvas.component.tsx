@@ -16,7 +16,7 @@ enum Shape {
 }
 
 class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showTextCanvas: boolean, toggle: boolean}> {
-    private petriNet: PetriNet;
+    private readonly petriNet: PetriNet;
     private detectedShape = Shape.UNDEFINED;
     private complete = false;
     private textCanvas: any;
@@ -40,11 +40,6 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
         this.canvasCtx.textAlign = 'center';
         this.canvasCtx.font = '18px Arial';
     }
-
-    get petriNetRef () {
-        return this.petriNet;
-    }
-
 
     private reset() {
         this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
@@ -221,10 +216,10 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
         switch (this.detectedShape) {
             case Shape.PLACE:
                 const circleProps = this.circleProperties;
-                this.petriNet.places.push(new Place(circleProps.centerCoordinates, circleProps.radius));
+                this.petriNet.places.push(new Place(circleProps.centerCoordinates, circleProps.radius, this.petriNet.places.length));
                 break;
             case Shape.TRANSITION:
-                this.petriNet.transitions.push(new Transition(this.mouseMovement[0], this.maxDistance));
+                this.petriNet.transitions.push(new Transition(this.mouseMovement[0], this.maxDistance, this.petriNet.transitions.length));
                 break;
             case Shape.ARC:
                 this.addArc(arcParameters);

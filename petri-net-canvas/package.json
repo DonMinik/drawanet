@@ -10,6 +10,7 @@
     "@types/node": "^16.11.6",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
+    "file-saver": "^2.0.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "^3.4.4",
@@ -42,6 +43,7 @@
     ]
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.3",
     "@types/tesseract.js": "^2.0.0"
   }
 }

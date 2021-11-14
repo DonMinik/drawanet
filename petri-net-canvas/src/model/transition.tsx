@@ -4,17 +4,23 @@ import {drawText, isSameCoordinates, isWithinRect, lengthOfLine} from "../utils/
 export class Transition implements PNNode<Transition> {
 
     text: string;
+    readonly index: number;
     private readonly maxCoordinates: Coordinates;
     private readonly startCoordinates: Coordinates;
     private readonly touchPoints: Coordinates[] = [];
 
-    constructor(start: Coordinates, max:Coordinates) {
+    constructor(start: Coordinates, max:Coordinates, index: number) {
         this.startCoordinates = start;
         this.maxCoordinates = max;
         this.touchPoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.startCoordinates.y});
         this.touchPoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.maxCoordinates.y});
         this.touchPoints.push({x: this.startCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
         this.touchPoints.push({x: this.maxCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
+        this.index = index;
+    }
+
+    get exportName(): string {
+        return this.text?.length > 0 ? this.text : 't' + this.index;
     }
 
     get centerCoordinates(): Coordinates {
