@@ -243,12 +243,7 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean,
         this.paintNet();
     }
 
-    count = 0;
-    A = <span>A</span>;
-    B = <span>V</span>;
-
     render() {
-         this.count ++;
         return(<div>
             <canvas    ref={this.canvasRef}
                onMouseDown={(e) => this.onMouseDown(e)}
