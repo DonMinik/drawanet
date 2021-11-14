@@ -7,8 +7,6 @@ export class TextDetectionService {
       //Todo: this does not work, but maybe try to find config parameters to increase precision
         // tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     }
-    constructor() {
-    }
 
     static async detectText(canvas: HTMLCanvasElement ): Promise<any> {
         const ctx = canvas.getContext('2d');

@@ -7,6 +7,13 @@ import {Mark} from "../model/mark";
 import {BaseCanvasComponent} from "./base-canvas.component";
 import TextCanvasComponent from "./text-canvas.component";
 
+enum Shape {
+    UNDEFINED,
+    PLACE,
+    TRANSITION,
+    ARC,
+    MARK
+}
 
 class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean, toggle: boolean}> {
     private petriNet: PetriNet;
@@ -172,7 +179,7 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean,
                 this.petriNet.transitions = this.petriNet.transitions.filter(transition => transition !== potentialTransitionsToDelete[0]);
             }
             this.petriNet.arcs = this.petriNet.arcs.filter(arc => {
-                return potentialPlacesToDelete[0] !==  arc.start && potentialPlacesToDelete[0] !== arc.end && potentialTransitionsToDelete[0] != arc.start && potentialTransitionsToDelete[0] != arc.end;
+                return potentialPlacesToDelete[0] !==  arc.start && potentialPlacesToDelete[0] !== arc.end && potentialTransitionsToDelete[0] !== arc.start && potentialTransitionsToDelete[0] !== arc.end;
             });
         } else if (potentialArcsToDelete.length === 1) {
             if (potentialArcsToDelete[0].weight > 1) {
@@ -258,13 +265,6 @@ class CanvasComponent extends BaseCanvasComponent<any, {showTextCanvas: boolean,
 
 }
 
-enum Shape {
-    UNDEFINED,
-    PLACE,
-    TRANSITION,
-    ARC,
-    MARK
-}
 
 export default CanvasComponent;
 
