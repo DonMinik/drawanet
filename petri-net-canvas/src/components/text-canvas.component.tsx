@@ -23,14 +23,13 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
 
     onClick() {
         TextDetectionService.detectText(this.canvasRef.current).then(
-            text =>  {
+            text => {
                 console.log('recognized text', text);
                 this.node.text = text;
                 this.setState({text: text});
                 this.callBack();
             }
         )
-
     }
 
     render() {
@@ -41,9 +40,8 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
                 onMouseUp={(e) => this.onMouseUp(e)}
                 onMouseMove={(e) => this.onMouseMove(e)}
             />
-            <div className='backdrop'>
-                <button onClick={() => this.onClick()} >Done</button>
-                <span>{this.state.text}</span>
+            <div className='backdrop' onClick={() => this.onClick()}>
+
             </div>
         </div>);
     }
@@ -56,18 +54,19 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
         this.canvasCtx.strokeStyle = '#FFF';
         this.canvasCtx.lineWidth = 3;
         this.canvasCtx.fillStyle = '#FFF';
-        this.setPosition(this.state.position)
+        this.setPosition()
 
     }
 
-    private setPosition(coordinates: Coordinates){
-        const x  = coordinates.x + TextCanvasComponent.CANVAS_WIDTH > window.innerWidth ? coordinates.x - TextCanvasComponent.CANVAS_WIDTH : coordinates.x;
-        const y  = coordinates.y + TextCanvasComponent.CANVAS_HEIGHT > window.innerHeight ? coordinates.y - TextCanvasComponent.CANVAS_HEIGHT : coordinates.y;
+    private setPosition(){
+        const x  = this.state.position.x + TextCanvasComponent.CANVAS_WIDTH > window.innerWidth ? this.state.position.x - TextCanvasComponent.CANVAS_WIDTH : this.state.position.x;
+        const y  = this.state.position.y + TextCanvasComponent.CANVAS_HEIGHT > window.innerHeight ? this.state.position.y - TextCanvasComponent.CANVAS_HEIGHT : this.state.position.y;
+        this.setState({position: {x: x, y: y}});
 
         const canvasStyle = this.canvasRef.current.style;
         canvasStyle.position = 'absolute';
-        canvasStyle.top = String(y) + 'px';
-        canvasStyle.left = String(x) + 'px';
+        canvasStyle.top = String(this.state.position.y) + 'px';
+        canvasStyle.left = String(this.state.position.x) + 'px';
         canvasStyle.zIndex = String(20);
     }
 }
