@@ -34,7 +34,7 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
         super.componentDidMount();
         this.canvasCtx.canvas.width = this.canvasCtx.canvas.clientWidth;
         this.canvasCtx.canvas.height = 400;
-        this.canvasCtx.strokeStyle = '#B6DC9E';
+        this.canvasCtx.strokeStyle = '#640064';
         this.canvasCtx.lineWidth = 1;
         this.canvasCtx.fillStyle = '#FFFFFF';
         this.canvasCtx.textAlign = 'center';
