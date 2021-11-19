@@ -6,6 +6,7 @@ import {Arc} from "../model/arc";
 import {Mark} from "../model/mark";
 import {BaseCanvasComponent} from "./base-canvas.component";
 import TextCanvasComponent from "./text-canvas.component";
+import {ScaleService} from "../services/scale.service";
 
 enum Shape {
     UNDEFINED,
@@ -52,6 +53,12 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
         this.petriNet.arcs.forEach(arc => arc.draw(this.canvasCtx));
         this.petriNet.places.forEach(place => place.draw(this.canvasCtx));
         this.petriNet.transitions.forEach(transitions => transitions.draw(this.canvasCtx));
+    }
+
+    private resetScale() {
+        if (this.petriNet.places.length === 0 && this.petriNet.transitions.length === 0) {
+           ScaleService.reset();
+        }
     }
 
     private isStartPosition(x: number,y: number) {
@@ -235,6 +242,7 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
 
         this.reset();
         this.paintNet();
+        this.resetScale();
     }
 
     render() {

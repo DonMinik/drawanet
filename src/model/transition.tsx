@@ -1,5 +1,6 @@
 import {Coordinates, PNNode} from "./petri-net.interfaces";
 import {drawText, isSameCoordinates, isWithinRect, lengthOfLine} from "../utils/draw-utils";
+import {ScaleService} from "../services/scale.service";
 
 export class Transition implements PNNode<Transition> {
 
@@ -10,8 +11,12 @@ export class Transition implements PNNode<Transition> {
     private readonly touchPoints: Coordinates[] = [];
 
     constructor(start: Coordinates, max:Coordinates, index: number) {
+
         this.startCoordinates = start;
-        this.maxCoordinates = max;
+        const edge = max.x > max.y ? Math.abs(start.x - max.x) : Math.abs(start.y - max.y);
+        const scale = ScaleService.scale(edge / 2)* 2
+
+        this.maxCoordinates = {x: start.x + Math.sign(max.x - start.x) * scale, y: start.y + Math.sign(max.y - start.y) * scale};
         this.touchPoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.startCoordinates.y});
         this.touchPoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.maxCoordinates.y});
         this.touchPoints.push({x: this.startCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});

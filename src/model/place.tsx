@@ -1,6 +1,7 @@
 import {Coordinates, PNNode} from "./petri-net.interfaces";
 import {Mark} from "./mark";
 import {drawText, isSameCoordinates, isWithinCircle, lengthOfLine} from "../utils/draw-utils";
+import {ScaleService} from "../services/scale.service";
 
 export class Place implements PNNode<Place>{
 
@@ -13,11 +14,11 @@ export class Place implements PNNode<Place>{
 
     constructor(center: Coordinates, radius: number, index: number) {
         this.centerCoordinates = center;
-        this.radius = radius;
-        this.touchPoints.push({x: center.x + radius, y: center.y}); // right
-        this.touchPoints.push({x: center.x - radius, y: center.y}); // left
-        this.touchPoints.push({x: center.x, y: center.y + radius}); // bottom
-        this.touchPoints.push({x: center.x, y: center.y - radius}); // top
+        this.radius = ScaleService.scale(radius);
+        this.touchPoints.push({x: center.x + this.radius, y: center.y}); // right
+        this.touchPoints.push({x: center.x - this.radius, y: center.y}); // left
+        this.touchPoints.push({x: center.x, y: center.y + this.radius}); // bottom
+        this.touchPoints.push({x: center.x, y: center.y - this.radius}); // top
         this.index = index;
     }
 
