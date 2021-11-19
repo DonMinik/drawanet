@@ -9,12 +9,13 @@ export class Transition implements PNNode<Transition> {
     private readonly maxCoordinates: Coordinates;
     private readonly startCoordinates: Coordinates;
     private readonly touchPoints: Coordinates[] = [];
+    private readonly edgeLength: number;
 
     constructor(start: Coordinates, max:Coordinates, index: number) {
 
         this.startCoordinates = start;
-        const edge = max.x > max.y ? Math.abs(start.x - max.x) : Math.abs(start.y - max.y);
-        const scale = ScaleService.scale(edge / 2)* 2
+        this.edgeLength = max.x > max.y ? Math.abs(start.x - max.x) : Math.abs(start.y - max.y);
+        const scale = ScaleService.scale(this.edgeLength / 2)* 2
 
         this.maxCoordinates = {x: start.x + Math.sign(max.x - start.x) * scale, y: start.y + Math.sign(max.y - start.y) * scale};
         this.touchPoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.startCoordinates.y});
@@ -45,7 +46,7 @@ export class Transition implements PNNode<Transition> {
         ctx.rect(x,y,w,h);
         ctx.stroke();
         ctx.closePath();
-        drawText(ctx, this.text, this.centerCoordinates);
+        drawText(ctx, this.text, {x: this.centerCoordinates.x, y: this.centerCoordinates.y + this.edgeLength / 2 + 20 });
     }
 
     isWithin(coordinates: Coordinates): boolean {

@@ -30,10 +30,9 @@ export class Place implements PNNode<Place>{
         ctx.beginPath();
         ctx.arc(this.centerCoordinates.x, this.centerCoordinates.y, this.radius, 0, 2 * Math.PI, false);
         ctx.stroke();
-        drawText(ctx, this.text, this.centerCoordinates);
+        drawText(ctx, this.text, {x: this.centerCoordinates.x, y: this.centerCoordinates.y + this.radius + 20});
         ctx.closePath();
         this.drawMarks(ctx);
-
     }
 
 
