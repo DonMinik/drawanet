@@ -19,6 +19,10 @@ export class Place implements PNNode<Place>{
         this.touchPoints.push({x: center.x - this.radius, y: center.y}); // left
         this.touchPoints.push({x: center.x, y: center.y + this.radius}); // bottom
         this.touchPoints.push({x: center.x, y: center.y - this.radius}); // top
+        this.touchPoints.push({x: center.x + this.radius * Math.sqrt(0.5), y: center.y + this.radius * Math.sqrt(0.5)}); //bottom right
+        this.touchPoints.push({x: center.x - this.radius * Math.sqrt(0.5), y: center.y + this.radius * Math.sqrt(0.5)}); //bottom left
+        this.touchPoints.push({x: center.x + this.radius * Math.sqrt(0.5), y: center.y - this.radius * Math.sqrt(0.5)}); //top right
+        this.touchPoints.push({x: center.x - this.radius * Math.sqrt(0.5), y: center.y - this.radius * Math.sqrt(0.5)}); //bottom left
         this.index = index;
     }
 

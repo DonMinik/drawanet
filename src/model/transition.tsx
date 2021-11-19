@@ -22,6 +22,10 @@ export class Transition implements PNNode<Transition> {
         this.touchPoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.maxCoordinates.y});
         this.touchPoints.push({x: this.startCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
         this.touchPoints.push({x: this.maxCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
+        this.touchPoints.push({x: this.startCoordinates.x, y: this.startCoordinates.y});
+        this.touchPoints.push({x: this.startCoordinates.x, y: this.maxCoordinates.y});
+        this.touchPoints.push({x: this.maxCoordinates.x, y: this.startCoordinates.y});
+        this.touchPoints.push({x: this.maxCoordinates.x, y: this.maxCoordinates.y});
         this.index = index;
     }
 
