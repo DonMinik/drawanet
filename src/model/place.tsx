@@ -35,8 +35,6 @@ export class Place implements PNNode<Place>{
         this.drawMarks(ctx);
     }
 
-
-
     isWithin(coordinates: Coordinates): boolean {
         return isWithinCircle(coordinates, this.centerCoordinates, this.radius);
     }

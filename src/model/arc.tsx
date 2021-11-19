@@ -5,7 +5,8 @@ export class Arc implements PNElement<Arc> {
     private readonly path: Coordinates[];
     private readonly startCoordinates: Coordinates;
     private readonly endCoordinates: Coordinates;
-
+    private static readonly LINE_REDUCE_LENGTH = 15;
+    private static readonly DEVIATION_PARAMETER = 3000;
 
     constructor(public start:PNNode<any>, public end: PNNode<any>, path: Coordinates[]) {
         this.path = Arc.reducePath(path);
@@ -14,23 +15,42 @@ export class Arc implements PNElement<Arc> {
     }
 
     private static reducePath(path: Coordinates[]): Coordinates[] {
+      return this.reduceByDirectionChange(this.reduceByDistance(path));
+    }
+
+    private static reduceByDistance(path: Coordinates[]): Coordinates[] {
         const reducedPath: Coordinates[] = [];
 
-        for(let i = 0; i < path.length; i++ ) {
+        reducedPath.push(path[0]);
+        for (let i = 0; i < path.length; i++) {
+            if (lengthOfLine(reducedPath[reducedPath.length -1], path[i]) > Arc.LINE_REDUCE_LENGTH) {
+                reducedPath.push(path[i]);
+            }
+        }
+        console.log('reduced by distance', reducedPath);
+        return reducedPath
+    }
+
+    private static reduceByDirectionChange(path: Coordinates[]): Coordinates[] {
+        const reducedPath: Coordinates[] = [];
+
+        for (let i = 0; i < path.length; i++) {
             if (i < 2) {
                 continue;
             }
-            if(Arc.isCurve(path[i-2], path[i-1], path[i])){
-                reducedPath.push(path[i-1]);
+            if (Arc.isCurve(path[i - 2], path[i - 1], path[i])) {
+                reducedPath.push(path[i - 1]);
             }
         }
+        console.log('reduced y direction', reducedPath);
         return reducedPath;
     }
 
     private static isCurve(start: Coordinates, middle: Coordinates, end: Coordinates): boolean {
         const startToEnd = lengthOfLine(start, end);
         const relativeDistance = (lengthOfLine(start, middle) + lengthOfLine(end, middle)) / startToEnd;
-        const deviationFactor = 1 + startToEnd / 100;
+        const deviationFactor = 1 + startToEnd / Arc.DEVIATION_PARAMETER;
+        console.log('relative Distance', relativeDistance, 'deviationFactor', deviationFactor  );
         return relativeDistance > deviationFactor;
     }
 
