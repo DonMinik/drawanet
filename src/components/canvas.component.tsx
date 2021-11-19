@@ -95,8 +95,10 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
         this.detectReturnToStartPosition();
 
         if (this.complete) {
-            this.detectedShape = this.mouseMovement.filter(c => c.x - this.mouseMovement[0]?.x < -10).length > 0 &&
-            this.mouseMovement.filter(c => this.mouseMovement[0]?.x - c.x < -10).length > 0
+            this.detectedShape = ( this.mouseMovement.filter(c => c.x - this.mouseMovement[0]?.x < - 12).length > 0 &&
+            this.mouseMovement.filter(c => this.mouseMovement[0]?.x - c.x < - 12).length > 0) ||
+            (this.mouseMovement.filter(c => c.y - this.mouseMovement[0]?.y < - 12).length > 0 &&
+            this.mouseMovement.filter(c => this.mouseMovement[0]?.y - c.y < - 12).length > 0)
                 ? Shape.PLACE : Shape.TRANSITION;
         }
     }
