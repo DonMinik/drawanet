@@ -30,7 +30,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: node-app
-          path: .
+          path: ./build/
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,3 +53,5 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C266D7E3877B4D3B8F7CE09B34D5D1CF }}
           package: .
+
+
