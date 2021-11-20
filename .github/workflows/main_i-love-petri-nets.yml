@@ -52,6 +52,6 @@ jobs:
           app-name: 'I-Love-Petri-Nets'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C266D7E3877B4D3B8F7CE09B34D5D1CF }}
-          package: ./build
+          package: ./
 
 
