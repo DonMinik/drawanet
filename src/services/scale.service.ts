@@ -2,6 +2,7 @@ export class ScaleService {
 
     static reset() {
         scaleStore.scale = 100;
+        scaleStore.initialized = false;
     }
 
     static scale(scale: number):number {
