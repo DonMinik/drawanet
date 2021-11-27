@@ -6,7 +6,7 @@ name: Build and deploy Node.js app to Azure Web App - I-Love-Petri-Nets
 on:
   push:
     branches:
-      - main
+      - version/1.0.0
   workflow_dispatch:
 
 jobs:
