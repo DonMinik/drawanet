@@ -1,6 +1,6 @@
 {
   "name": "petri-net-canvas",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Dominik Mathar",
   "private": true,
   "dependencies": {

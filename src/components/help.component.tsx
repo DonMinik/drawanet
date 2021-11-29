@@ -21,6 +21,7 @@ class HelpComponent extends Component<{ callBack: HelpCallback }, any> {
                         <p>Tokens can be added by clicking within a place</p>
                         <p>Start arc within a place or transition and end the line within another.</p>
                         <p>Use double click to name a place or transition and write the name into the black field. The close by clicking outside the field.</p>
+                        <p>Currently only a single capital Letters or Numbers is supported. If your writing is recognized incorrectly please try to write the character as close to printed characters as possible.</p>
                         <p>To draw arc weights draw the same arc twice or multiple times.</p>
                         <p>If you need to delete any element just cross out the element you wish to delete.(Tokens can be removed with a single click.) </p>
                 </div>
