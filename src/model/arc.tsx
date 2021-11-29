@@ -10,8 +10,8 @@ export class Arc implements PNElement<Arc> {
 
     constructor(public start:PNNode<any>, public end: PNNode<any>, path: Coordinates[]) {
         this.path = Arc.reducePath(path);
-        this.startCoordinates = this.start.closestTouchPoint(this.path[0] ? this.path[0] : this.end.centerCoordinates);
-        this.endCoordinates = this.end.closestTouchPoint(this.path[this.path.length -1] ? this.path[this.path.length -1]: this.start.centerCoordinates);
+        this.startCoordinates = this.start.closestTouchPoint(this.path[0] ? this.path[0] : this.end.centerCoordinates, this.start.centerCoordinates);
+        this.endCoordinates = this.end.closestTouchPoint(this.path[this.path.length -1] ? this.path[this.path.length -1]: this.start.centerCoordinates, this.end.centerCoordinates);
     }
 
     private static reducePath(path: Coordinates[]): Coordinates[] {
@@ -56,8 +56,6 @@ export class Arc implements PNElement<Arc> {
 
     draw(ctx: CanvasRenderingContext2D) {
         const last = this.path[this.path.length -1] ? this.path[this.path.length -1]: this.start.centerCoordinates ;
-
-
         ctx.beginPath();
 
         ctx.moveTo(this.startCoordinates.x, this.startCoordinates.y);
@@ -65,7 +63,7 @@ export class Arc implements PNElement<Arc> {
         if(this.weight > 1) {
             const middleOfPath = this.path[Math.floor(this.path.length / 2)];
             const weightTextPosition = middleOfPath ? middleOfPath : middleOfLine(this.startCoordinates, this.endCoordinates);
-            ctx.strokeText(String(this.weight), weightTextPosition.x, weightTextPosition.y);
+            ctx.fillText(String(this.weight), weightTextPosition.x, weightTextPosition.y);
         }
         ctx.lineTo(this.endCoordinates.x, this.endCoordinates.y)
         const angle = Math.atan2( this.endCoordinates.y - last.y, this.endCoordinates.x - last.x);

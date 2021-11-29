@@ -26,7 +26,10 @@ export function isWithinCircle(coordinatesToCheck: Coordinates, center: Coordina
 export function getAngle(a: Coordinates, b: Coordinates){
     return Math.atan2(b.y - a.y, b.x - a.x);
 }
-export function lengthOfLine(a:Coordinates, b: Coordinates){
+export function lengthOfLine(a:Coordinates | undefined, b: Coordinates | undefined){
+    if (!a || !b) {
+        return 0;
+    }
     return Math.sqrt(  Math.pow(b.x - a.x, 2) + Math.pow( b.y - a.y, 2) );
 }
 export function middleOfLine(a:Coordinates, b: Coordinates): Coordinates {

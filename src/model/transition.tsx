@@ -57,9 +57,9 @@ export class Transition implements PNNode<Transition> {
         return isWithinRect(coordinates, this.startCoordinates, this.maxCoordinates);
     }
 
-    closestTouchPoint(coordinates: Coordinates): Coordinates {
+    closestTouchPoint(outside: Coordinates, inside?: Coordinates): Coordinates {
         return this.touchPoints.reduce((prev, current) =>
-            (lengthOfLine(current,coordinates) < lengthOfLine(prev, coordinates)) ?
+            (lengthOfLine(current, outside) + lengthOfLine(current, inside) < lengthOfLine(prev, outside) + lengthOfLine(prev, inside)) ?
                 current : prev);
     }
 

@@ -43,9 +43,9 @@ export class Place implements PNNode<Place>{
         return isWithinCircle(coordinates, this.centerCoordinates, this.radius);
     }
 
-    closestTouchPoint(coordinates: Coordinates): Coordinates {
+    closestTouchPoint(outside: Coordinates, inside?:Coordinates ): Coordinates {
         return this.touchPoints.reduce((prev, current) =>
-            (lengthOfLine(current,coordinates) < lengthOfLine(prev, coordinates)) ?
+            (lengthOfLine(current, outside) + lengthOfLine(current, inside) < lengthOfLine(prev, outside) + lengthOfLine(prev, inside)) ?
                 current : prev);
     }
 

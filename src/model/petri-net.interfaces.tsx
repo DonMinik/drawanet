@@ -18,7 +18,7 @@ export interface PNNode<T> extends PNElement<T> {
     index: number;
     exportName: string;
     isWithin: (coordinates: Coordinates) => boolean,
-    closestTouchPoint: (coordinates: Coordinates) => Coordinates
+    closestTouchPoint: (outside: Coordinates, inside?:Coordinates) => Coordinates
     centerCoordinates: Coordinates;
 }
 
