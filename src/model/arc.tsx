@@ -61,9 +61,7 @@ export class Arc implements PNElement<Arc> {
         ctx.moveTo(this.startCoordinates.x, this.startCoordinates.y);
         this.path.forEach(point =>  ctx.lineTo(point.x, point.y));
         if(this.weight > 1) {
-            const middleOfPath = this.path[Math.floor(this.path.length / 2)];
-            const weightTextPosition = middleOfPath ? middleOfPath : middleOfLine(this.startCoordinates, this.endCoordinates);
-            ctx.fillText(String(this.weight), weightTextPosition.x, weightTextPosition.y);
+            this.drawWeight(ctx);
         }
         ctx.lineTo(this.endCoordinates.x, this.endCoordinates.y)
         const angle = Math.atan2( this.endCoordinates.y - last.y, this.endCoordinates.x - last.x);
@@ -72,6 +70,14 @@ export class Arc implements PNElement<Arc> {
         ctx.lineTo(this.endCoordinates.x - 10 * Math.cos(angle + Math.PI / 6), this.endCoordinates.y - 10 * Math.sin(angle + Math.PI / 6));
         ctx.stroke();
         ctx.closePath();
+    }
+
+    private drawWeight(ctx: CanvasRenderingContext2D) {
+        ctx.fillStyle = '#640064';
+        const middleOfPath = this.path[Math.floor(this.path.length / 2)];
+        const weightTextPosition = middleOfPath ? middleOfPath : middleOfLine(this.startCoordinates, this.endCoordinates);
+        ctx.fillText(String(this.weight), weightTextPosition.x, weightTextPosition.y);
+        ctx.fillStyle = '#FFF';
     }
 
     equals(arc: Arc): boolean {
