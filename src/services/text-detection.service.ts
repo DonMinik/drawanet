@@ -4,7 +4,7 @@ export class TextDetectionService {
 
     private static readonly TESSERACT_CONFIG = {
         tessedit_char_whitelist: 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 0 1 2 3 4 5 6 7 8 9 ',
-        tessedit_pageseg_mode: 10
+       // tessedit_pageseg_mode: 7
     }
     private static readonly TESSERACT_WORKER_CONFIG = {
         logger: m => console.log(m),
