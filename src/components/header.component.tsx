@@ -1,6 +1,27 @@
 import React, {Component} from "react";
+import {faQuestionCircle} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import HelpComponent from "./help.component";
 
-class HeaderComponent extends Component {
+class HeaderComponent extends Component<any, {showHelp: boolean}> {
+
+    help: any;
+
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            showHelp: false
+        }
+    }
+
+    showHelp() {
+        this.help = <HelpComponent callBack={() => this.closeHelp()}/>
+        this.setState({showHelp: true});
+    }
+
+    closeHelp() {
+        this.setState({showHelp: false});
+    }
 
     render() {
         return (
@@ -9,9 +30,10 @@ class HeaderComponent extends Component {
                     <h1 style={{color: "#000"}}>I<span style={{color: "#FF0000"}}> &#10084;</span> Petri Nets</h1>
                 </a>
 
-                <h2> Draw a petri net - Hold down left mouse button to draw places, transitions, arcs, and tokens. <br/>
-                    Use double click to name a place or transition.
-                </h2>
+                <h2> Draw a petri net <FontAwesomeIcon icon={ faQuestionCircle} onClick={() => this.showHelp()}/></h2>
+                { this.state.showHelp ? this.help
+                    : null
+                }
             </div>
         );
     }
