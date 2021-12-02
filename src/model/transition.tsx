@@ -18,6 +18,8 @@ export class Transition implements PNNode<Transition> {
         const scale = ScaleService.scale(this.edgeLength / 2)* 2
 
         this.maxCoordinates = {x: start.x + Math.sign(max.x - start.x) * scale, y: start.y + Math.sign(max.y - start.y) * scale};
+        this.edgeLength = this.maxCoordinates.x > this.maxCoordinates.y ? Math.abs(start.x - this.maxCoordinates.x) : Math.abs(start.y - this.maxCoordinates.y);
+
         this.touchPoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.startCoordinates.y});
         this.touchPoints.push({x: this.startCoordinates.x + (this.maxCoordinates.x - this.startCoordinates.x) / 2, y: this.maxCoordinates.y});
         this.touchPoints.push({x: this.startCoordinates.x, y: this.startCoordinates.y  + (this.maxCoordinates.y - this.startCoordinates.y) / 2});
