@@ -8,6 +8,9 @@ import {PetriNet} from "./model/petri-net.interfaces";
 
 class App extends Component<any, {petriNet: PetriNet}> {
 
+    canvasRef: React.RefObject<CanvasComponent>;
+
+
     constructor(props: any) {
         super(props);
         this.state = {
@@ -17,14 +20,20 @@ class App extends Component<any, {petriNet: PetriNet}> {
                 transitions: []
             }
         }
+        this.canvasRef = React.createRef();
+    }
+
+    onMouseUp(e) {
+        console.log('mouse Up');
+        this.canvasRef.current.checkParentMouseUp(e);
     }
 
     render() {
         return (
-            <div className="App">
+            <div className="App" onMouseUp={(e) => this.onMouseUp(e)}>
                 <main className="App-main">
                     <HeaderComponent/>
-                    <CanvasComponent petriNet={this.state.petriNet}/>
+                    <CanvasComponent ref={this.canvasRef} petriNet={this.state.petriNet}/>
                     <DownloadComponent petriNet={this.state.petriNet}/>
                     <hr/>
                     <FooterComponent/>

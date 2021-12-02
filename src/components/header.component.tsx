@@ -30,7 +30,7 @@ class HeaderComponent extends Component<any, {showHelp: boolean}> {
                     <h1 style={{color: "#000"}}>I<span style={{color: "#FF0000"}}> &#10084;</span> Petri Nets</h1>
                 </a>
 
-                <h2> Draw a petri net <FontAwesomeIcon icon={ faQuestionCircle} onClick={() => this.showHelp()}/></h2>
+                <h2> Draw a petri net <FontAwesomeIcon cursor={'pointer'} icon={ faQuestionCircle} onClick={() => this.showHelp()}/></h2>
                 { this.state.showHelp ? this.help
                     : null
                 }

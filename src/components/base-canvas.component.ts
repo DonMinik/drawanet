@@ -16,8 +16,26 @@ export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
         return this.canvasRef.current.getBoundingClientRect().left;
     }
 
+    protected get canvasPositionRight() {
+        return this.canvasRef.current.getBoundingClientRect().right;
+    }
+
     protected get canvasPositionTop() {
         return this.canvasRef.current.getBoundingClientRect().top;
+    }
+
+    protected get canvasPositionBottom() {
+        return this.canvasRef.current.getBoundingClientRect().bottom;
+    }
+
+    protected isWithinCanvas(coordinates: Coordinates) {
+        console.log('left', this.canvasPositionLeft);
+        console.log('right', this.canvasPositionRight);
+        console.log('top', this.canvasPositionTop);
+        console.log('bottom', this.canvasPositionBottom);
+        console.log('coordinate',coordinates);
+        return coordinates.x > this.canvasPositionLeft && coordinates.x < this.canvasPositionRight &&
+            coordinates.y > this.canvasPositionTop && coordinates.y < this.canvasPositionBottom;
     }
 
     onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
@@ -42,7 +60,7 @@ export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
         }
     }
 
-    onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
+    onMouseUp(event: React.MouseEvent<HTMLElement>) {
         this.isDraw = false;
         this.canvasCtx?.closePath();
 
