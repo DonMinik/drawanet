@@ -73,6 +73,10 @@ hr {
     padding: 10px;
 }
 
+.help-link {
+  cursor: pointer;
+}
+
 .backdrop {
     z-index: 10;
     opacity: 0.1;

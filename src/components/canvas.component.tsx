@@ -4,11 +4,11 @@ import {Place} from "../model/place";
 import {Transition} from "../model/transition";
 import {Arc} from "../model/arc";
 import {Token} from "../model/token";
-import {BaseCanvasComponent} from "./base-canvas.component";
 import TextCanvasComponent from "./text-canvas.component";
 import {ScaleService} from "../services/scale.service";
 import {faExpandAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ResizableCanvasComponent, {ResizeableCanvasState} from "./resizable-canvas.component";
 
 enum Shape {
     UNDEFINED,
@@ -18,7 +18,7 @@ enum Shape {
     TOKEN
 }
 
-class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, CanvasState> {
+class CanvasComponent extends ResizableCanvasComponent<{ petriNet: PetriNet }, CanvasState> {
     private readonly petriNet: PetriNet;
     private detectedShape = Shape.UNDEFINED;
     private complete = false;
@@ -42,7 +42,7 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, Canvas
         this.setBaseDrawingParameters();
     }
 
-    private setBaseDrawingParameters() {
+    protected setBaseDrawingParameters() {
         this.canvasCtx.strokeStyle = '#640064';
         this.canvasCtx.lineWidth = 1;
         this.canvasCtx.fillStyle = '#FFFFFF';
@@ -269,41 +269,7 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, Canvas
         }
     }
 
-    checkParentMouseMove(e: React.MouseEvent<HTMLDivElement>) {
-        if (!this.isWithinCanvas({x: e.clientX, y: e.clientY}) && this.state.isResize) {
-            this.resizeCanvas(e.movementY);
-        }
-    }
 
-    onMouseDown(e: React.MouseEvent<HTMLCanvasElement>) {
-        if (this.isAtBottomLine(e)) {
-            this.setState({isResize: true});
-        } else {
-            super.onMouseDown(e);
-        }
-    }
-
-    private isAtBottomLine(e: React.MouseEvent<HTMLCanvasElement>) {
-        return e.clientY > this.canvasPositionBottom - 20 && this.isWithinCanvas({x: e.clientX, y: e.clientY});
-    }
-
-    onMouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
-        if (this.state.isResize) {
-            this.canvasCtx.canvas.style.cursor = 'grabbing'
-            this.resizeCanvas(e.movementY);
-        } else {
-            this.isAtBottomLine(e) ?
-                this.canvasCtx.canvas.style.cursor = 'grab' :
-                this.canvasCtx.canvas.style.cursor = 'default';
-            super.onMouseMove(e);
-        }
-    }
-
-    private resizeCanvas(delta: number) {
-        this.canvasRef.current.height += delta;
-        this.canvasRef.current.style.height = String(this.canvasRef.current.height) + 'px';
-        this.setBaseDrawingParameters(); // not sure why but otherwise these properties get lost
-    }
 
     render() {
         return (<div>
@@ -329,7 +295,7 @@ interface CircleProperties {
     radius: number,
 }
 
-interface CanvasState {
+interface CanvasState extends ResizeableCanvasState{
     showTextCanvas: boolean,
     toggle: boolean
     isResize: boolean
