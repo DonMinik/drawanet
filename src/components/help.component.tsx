@@ -19,7 +19,8 @@ class HelpComponent extends Component<{ callBack: HelpCallback }, any> {
                 <div className='help'>
                     <p>Hold down left mouse button to draw places, transitions, arcs, and tokens.</p>
                     <p>Elements you draw are not movable. The size of places and transitions is defined by the first one
-                        you draw. Keep this in mind if you need space for a large net.</p>
+                        you draw. Keep this in mind if you need space for a large net. You can increase the drawing space by
+                        dragging the bottom line of it, though.</p>
                     <p>Tokens can be added by clicking within a place</p>
                     <p>Start arc within a place or transition and end the line within another.</p>
                     <p>Use double click to name a place or transition and write the name into the black field. The close

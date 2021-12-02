@@ -39,6 +39,10 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, Canvas
         super.componentDidMount();
         this.canvasCtx.canvas.width = this.canvasCtx.canvas.clientWidth;
         this.canvasCtx.canvas.height = 400;
+        this.setBaseDrawingParameters();
+    }
+
+    private setBaseDrawingParameters() {
         this.canvasCtx.strokeStyle = '#640064';
         this.canvasCtx.lineWidth = 1;
         this.canvasCtx.fillStyle = '#FFFFFF';
@@ -280,7 +284,7 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, Canvas
     }
 
     private isAtBottomLine(e: React.MouseEvent<HTMLCanvasElement>) {
-        return e.clientY > this.canvasPositionBottom - 30 && this.isWithinCanvas({x: e.clientX, y: e.clientY});
+        return e.clientY > this.canvasPositionBottom - 20 && this.isWithinCanvas({x: e.clientX, y: e.clientY});
     }
 
     onMouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
@@ -298,6 +302,7 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, Canvas
     private resizeCanvas(delta: number) {
         this.canvasRef.current.height += delta;
         this.canvasRef.current.style.height = String(this.canvasRef.current.height) + 'px';
+        this.setBaseDrawingParameters(); // not sure why but otherwise these properties get lost
     }
 
     render() {
