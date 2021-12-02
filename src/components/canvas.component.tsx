@@ -7,6 +7,8 @@ import {Token} from "../model/token";
 import {BaseCanvasComponent} from "./base-canvas.component";
 import TextCanvasComponent from "./text-canvas.component";
 import {ScaleService} from "../services/scale.service";
+import {faExpandAlt} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 enum Shape {
     UNDEFINED,
@@ -16,7 +18,7 @@ enum Shape {
     TOKEN
 }
 
-class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showTextCanvas: boolean, toggle: boolean}> {
+class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, CanvasState> {
     private readonly petriNet: PetriNet;
     private detectedShape = Shape.UNDEFINED;
     private complete = false;
@@ -28,9 +30,11 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
         this.petriNet = props.petriNet;
         this.state = {
             showTextCanvas: false,
-            toggle: false
+            toggle: false,
+            isResize: false
         }
     }
+
     componentDidMount() {
         super.componentDidMount();
         this.canvasCtx.canvas.width = this.canvasCtx.canvas.clientWidth;
@@ -57,33 +61,36 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
 
     private resetScale() {
         if (this.petriNet.places.length === 0 && this.petriNet.transitions.length === 0) {
-           ScaleService.reset();
+            ScaleService.reset();
         }
     }
 
-    private isStartPosition(x: number,y: number) {
-        return Math.abs(x - this.mouseMovement[0]?.x) <  10 && Math.abs(y -this.mouseMovement[0]?.y) < 10;
+    private isStartPosition(x: number, y: number) {
+        return Math.abs(x - this.mouseMovement[0]?.x) < 10 && Math.abs(y - this.mouseMovement[0]?.y) < 10;
     }
 
     private isWithin(coordinates: Coordinates, nodes: PNNode<any>[]): PNNode<any> | undefined {
         return nodes.find(node => node.isWithin(coordinates));
     }
 
-    private detectArc(): { start: PNNode<any>, end?: PNNode<any> } | null{
+    private detectArc(): { start: PNNode<any>, end?: PNNode<any> } | null {
         const startWithinPlace = this.isWithin(this.mouseMovement[0], this.petriNet.places);
         const startWithinTransition = this.isWithin(this.mouseMovement[0], this.petriNet.transitions);
-        const endsWithinPlace = this.isWithin(this.mouseMovement[this.mouseMovement.length -1], this.petriNet.places);
-        const endsWithinTransition = this.isWithin(this.mouseMovement[this.mouseMovement.length -1], this.petriNet.transitions);
-        const placeToTransition =  startWithinPlace  && endsWithinTransition ;
+        const endsWithinPlace = this.isWithin(this.mouseMovement[this.mouseMovement.length - 1], this.petriNet.places);
+        const endsWithinTransition = this.isWithin(this.mouseMovement[this.mouseMovement.length - 1], this.petriNet.transitions);
+        const placeToTransition = startWithinPlace && endsWithinTransition;
         const transitionToPlace = startWithinTransition && endsWithinPlace;
         //ARC
-        if (placeToTransition  || transitionToPlace) {
+        if (placeToTransition || transitionToPlace) {
             this.complete = true;
             this.detectedShape = Shape.ARC;
             // @ts-ignore
-            return {start: placeToTransition ? startWithinPlace : startWithinTransition, end: placeToTransition ? endsWithinTransition: endsWithinPlace};
+            return {
+                start: placeToTransition ? startWithinPlace : startWithinTransition,
+                end: placeToTransition ? endsWithinTransition : endsWithinPlace
+            };
         } // TOKEN
-        else if (startWithinPlace && endsWithinPlace && (startWithinPlace as Place).equals(endsWithinPlace as Place)){
+        else if (startWithinPlace && endsWithinPlace && (startWithinPlace as Place).equals(endsWithinPlace as Place)) {
             this.detectedShape = Shape.TOKEN;
             this.complete = true;
             return {start: startWithinPlace};
@@ -95,10 +102,10 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
         this.detectReturnToStartPosition();
 
         if (this.complete) {
-            this.detectedShape = ( this.mouseMovement.filter(c => c.x - this.mouseMovement[0]?.x < - 12).length > 0 &&
-            this.mouseMovement.filter(c => this.mouseMovement[0]?.x - c.x < - 12).length > 0) ||
-            (this.mouseMovement.filter(c => c.y - this.mouseMovement[0]?.y < - 12).length > 0 &&
-            this.mouseMovement.filter(c => this.mouseMovement[0]?.y - c.y < - 12).length > 0)
+            this.detectedShape = (this.mouseMovement.filter(c => c.x - this.mouseMovement[0]?.x < -12).length > 0 &&
+                this.mouseMovement.filter(c => this.mouseMovement[0]?.x - c.x < -12).length > 0) ||
+            (this.mouseMovement.filter(c => c.y - this.mouseMovement[0]?.y < -12).length > 0 &&
+                this.mouseMovement.filter(c => this.mouseMovement[0]?.y - c.y < -12).length > 0)
                 ? Shape.PLACE : Shape.TRANSITION;
         }
     }
@@ -117,10 +124,10 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
     }
 
     private get maxDistance(): Coordinates {
-       return {
-           x: this.mouseMovement.reduce((prev, current) => (Math.abs(this.mouseMovement[0].x - prev.x) > Math.abs(this.mouseMovement[0].x - current.x)) ? prev : current).x,
-           y: this.mouseMovement.reduce((prev, current) => (Math.abs(this.mouseMovement[0].y -prev.y) > Math.abs(this.mouseMovement[0].y - current.y)) ? prev : current).y
-       }
+        return {
+            x: this.mouseMovement.reduce((prev, current) => (Math.abs(this.mouseMovement[0].x - prev.x) > Math.abs(this.mouseMovement[0].x - current.x)) ? prev : current).x,
+            y: this.mouseMovement.reduce((prev, current) => (Math.abs(this.mouseMovement[0].y - prev.y) > Math.abs(this.mouseMovement[0].y - current.y)) ? prev : current).y
+        }
     }
 
     private get circleProperties(): CircleProperties {
@@ -129,13 +136,14 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
         const highestY = this.mouseMovement.reduce((prev, current) => (prev.y > current.y) ? prev : current).y;
         const lowestY = this.mouseMovement.reduce((prev, current) => (prev.y < current.y) ? prev : current).y;
         return {
-            radius: (highestX - lowestX > (highestY - lowestY) ? highestX - lowestX  : (highestY - lowestY) ) / 2,
-                centerCoordinates: {
+            radius: (highestX - lowestX > (highestY - lowestY) ? highestX - lowestX : (highestY - lowestY)) / 2,
+            centerCoordinates: {
                 x: (highestX - lowestX) / 2 + lowestX,
                 y: (highestY - lowestY) / 2 + lowestY
             }
         }
     }
+
     private addArc(arcParameters: { start: PNNode<any>; end?: PNNode<any> } | null) {
         if (arcParameters && arcParameters.end) {
             const filteredMovements =
@@ -152,12 +160,12 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
         }
     }
 
-    private determinePotentialNodesToDelete(nodes :PNNode<any>[]) {
+    private determinePotentialNodesToDelete(nodes: PNNode<any>[]) {
         const start = this.mouseMovement[0];
-        const end = this.mouseMovement[this.mouseMovement.length -1];
+        const end = this.mouseMovement[this.mouseMovement.length - 1];
 
         return nodes.filter(node => {
-            const startsAndEndsOutside =  !node.isWithin(start) && !node.isWithin(end);
+            const startsAndEndsOutside = !node.isWithin(start) && !node.isWithin(end);
             const crossesPlace = this.mouseMovement.filter(move => node.isWithin(move)).length > 0;
             return startsAndEndsOutside && crossesPlace;
         });
@@ -178,15 +186,15 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
         if (potentialPlacesToDelete.length + potentialTransitionsToDelete.length === 1) {
             if (potentialPlacesToDelete[0]) {
                 this.petriNet.places = this.petriNet.places.filter(place => place !== potentialPlacesToDelete[0]);
-            } else if (potentialTransitionsToDelete[0]){
+            } else if (potentialTransitionsToDelete[0]) {
                 this.petriNet.transitions = this.petriNet.transitions.filter(transition => transition !== potentialTransitionsToDelete[0]);
             }
             this.petriNet.arcs = this.petriNet.arcs.filter(arc => {
-                return potentialPlacesToDelete[0] !==  arc.start && potentialPlacesToDelete[0] !== arc.end && potentialTransitionsToDelete[0] !== arc.start && potentialTransitionsToDelete[0] !== arc.end;
+                return potentialPlacesToDelete[0] !== arc.start && potentialPlacesToDelete[0] !== arc.end && potentialTransitionsToDelete[0] !== arc.start && potentialTransitionsToDelete[0] !== arc.end;
             });
         } else if (potentialArcsToDelete.length === 1) {
             if (potentialArcsToDelete[0].weight > 1) {
-                potentialArcsToDelete[0].weight --;
+                potentialArcsToDelete[0].weight--;
             } else {
                 this.petriNet.arcs = this.petriNet.arcs.filter(arc => {
                     return arc !== potentialArcsToDelete[0]
@@ -205,20 +213,22 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
         const x = event.clientX - this.canvasPositionLeft;
         const y = event.clientY - this.canvasPositionTop;
         let nodeToName: PNNode<any>;
-        nodeToName = this.petriNet.transitions.find(transition => transition.isWithin({x: x, y:y}));
-        if(!nodeToName) {
-            nodeToName = this.petriNet.places.find(place => place.isWithin({x: x, y:y}));
+        nodeToName = this.petriNet.transitions.find(transition => transition.isWithin({x: x, y: y}));
+        if (!nodeToName) {
+            nodeToName = this.petriNet.places.find(place => place.isWithin({x: x, y: y}));
         }
-        if(nodeToName) {
-            this.textCanvas = <TextCanvasComponent coordinates={{x: x, y: y}} callBack={() => this.closeTextCanvas()} node={nodeToName}/>; //new TextCanvasComponent({coordinates: {x: x, y: y}, callback: this.closeTextCanvas });
+        if (nodeToName) {
+            this.textCanvas = <TextCanvasComponent coordinates={{x: x, y: y}} callBack={() => this.closeTextCanvas()}
+                                                   node={nodeToName}/>; //new TextCanvasComponent({coordinates: {x: x, y: y}, callback: this.closeTextCanvas });
             this.setState({showTextCanvas: true});
         }
     }
 
     onMouseUp(event: React.MouseEvent<HTMLCanvasElement>) {
         super.onMouseUp(event);
+        this.setState({isResize: false});
         const arcParameters = this.detectArc();
-        if(!this.complete) {
+        if (!this.complete) {
             this.detectPlaceOrTransition();
         }
 
@@ -235,7 +245,7 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
                 break;
             case Shape.TOKEN:
                 const token = new Token(this.mouseMovement[0] ? this.mouseMovement[0]
-                    : {x:event.clientX - this.canvasPositionLeft, y:event.clientY - this.canvasPositionTop});
+                    : {x: event.clientX - this.canvasPositionLeft, y: event.clientY - this.canvasPositionTop});
                 (arcParameters?.start as Place).addToken(token);
                 break;
             case Shape.UNDEFINED:
@@ -248,23 +258,59 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
     }
 
     checkParentMouseUp(e: React.MouseEvent<HTMLDivElement>) {
-        if (!this.isWithinCanvas({x: e.clientX, y: e.clientY}) ) {
+        if (!this.isWithinCanvas({x: e.clientX, y: e.clientY})) {
             super.onMouseUp(e);
             this.reset();
             this.paintNet();
         }
     }
 
+    checkParentMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+        if (!this.isWithinCanvas({x: e.clientX, y: e.clientY}) && this.state.isResize) {
+            this.resizeCanvas(e.movementY);
+        }
+    }
+
+    onMouseDown(e: React.MouseEvent<HTMLCanvasElement>) {
+        if (this.isAtBottomLine(e)) {
+            this.setState({isResize: true});
+        } else {
+            super.onMouseDown(e);
+        }
+    }
+
+    private isAtBottomLine(e: React.MouseEvent<HTMLCanvasElement>) {
+        return e.clientY > this.canvasPositionBottom - 30 && this.isWithinCanvas({x: e.clientX, y: e.clientY});
+    }
+
+    onMouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
+        if (this.state.isResize) {
+            this.canvasCtx.canvas.style.cursor = 'grabbing'
+            this.resizeCanvas(e.movementY);
+        } else {
+            this.isAtBottomLine(e) ?
+                this.canvasCtx.canvas.style.cursor = 'grab' :
+                this.canvasCtx.canvas.style.cursor = 'default';
+            super.onMouseMove(e);
+        }
+    }
+
+    private resizeCanvas(delta: number) {
+        this.canvasRef.current.height += delta;
+        this.canvasRef.current.style.height = String(this.canvasRef.current.height) + 'px';
+    }
+
     render() {
-        return(<div>
-            <canvas    ref={this.canvasRef}
-               onMouseDown={(e) => this.onMouseDown(e)}
-               onMouseMove={(e) => this.onMouseMove(e)}
-               onMouseUp={(e) => this.onMouseUp(e)}
-               onDoubleClick={e => this.onDoubleClick(e)}
-               className='canvas'
+        return (<div>
+            {this.state.isResize ? <FontAwesomeIcon className='resizeIcon' icon={faExpandAlt}/> : null}
+            <canvas ref={this.canvasRef}
+                    onMouseDown={(e) => this.onMouseDown(e)}
+                    onMouseMove={(e) => this.onMouseMove(e)}
+                    onMouseUp={(e) => this.onMouseUp(e)}
+                    onDoubleClick={e => this.onDoubleClick(e)}
+                    className='canvas'
             />
-            { this.state.showTextCanvas ? this.textCanvas
+            {this.state.showTextCanvas ? this.textCanvas
                 : null
             }
         </div>);
@@ -275,5 +321,11 @@ export default CanvasComponent;
 
 interface CircleProperties {
     centerCoordinates: Coordinates,
-    radius: number
+    radius: number,
+}
+
+interface CanvasState {
+    showTextCanvas: boolean,
+    toggle: boolean
+    isResize: boolean
 }

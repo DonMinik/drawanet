@@ -27,9 +27,15 @@ class App extends Component<any, {petriNet: PetriNet}> {
         this.canvasRef.current.checkParentMouseUp(e);
     }
 
+    onMouseMove(e) {
+        this.canvasRef.current.checkParentMouseMove(e);
+    }
+
     render() {
         return (
-            <div className="App" onMouseUp={(e) => this.onMouseUp(e)}>
+            <div className="App"
+                 onMouseUp={(e) => this.onMouseUp(e)}
+                    onMouseMove={e => this.onMouseMove(e)}>
                 <main className="App-main">
                     <HeaderComponent/>
                     <CanvasComponent ref={this.canvasRef} petriNet={this.state.petriNet}/>
