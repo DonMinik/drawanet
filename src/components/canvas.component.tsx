@@ -3,7 +3,7 @@ import {Coordinates, PetriNet, PNNode} from "../model/petri-net.interfaces";
 import {Place} from "../model/place";
 import {Transition} from "../model/transition";
 import {Arc} from "../model/arc";
-import {Mark} from "../model/mark";
+import {Token} from "../model/token";
 import {BaseCanvasComponent} from "./base-canvas.component";
 import TextCanvasComponent from "./text-canvas.component";
 import {ScaleService} from "../services/scale.service";
@@ -13,7 +13,7 @@ enum Shape {
     PLACE,
     TRANSITION,
     ARC,
-    MARK
+    TOKEN
 }
 
 class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showTextCanvas: boolean, toggle: boolean}> {
@@ -82,9 +82,9 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
             this.detectedShape = Shape.ARC;
             // @ts-ignore
             return {start: placeToTransition ? startWithinPlace : startWithinTransition, end: placeToTransition ? endsWithinTransition: endsWithinPlace};
-        } // MARK
+        } // TOKEN
         else if (startWithinPlace && endsWithinPlace && (startWithinPlace as Place).equals(endsWithinPlace as Place)){
-            this.detectedShape = Shape.MARK;
+            this.detectedShape = Shape.TOKEN;
             this.complete = true;
             return {start: startWithinPlace};
         }
@@ -233,10 +233,10 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
             case Shape.ARC:
                 this.addArc(arcParameters);
                 break;
-            case Shape.MARK:
-                const mark = new Mark(this.mouseMovement[0] ? this.mouseMovement[0]
+            case Shape.TOKEN:
+                const token = new Token(this.mouseMovement[0] ? this.mouseMovement[0]
                     : {x:event.clientX - this.canvasPositionLeft, y:event.clientY - this.canvasPositionTop});
-                (arcParameters?.start as Place).addMark(mark);
+                (arcParameters?.start as Place).addToken(token);
                 break;
             case Shape.UNDEFINED:
                 this.checkForDeleteMovement();

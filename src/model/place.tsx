@@ -1,12 +1,12 @@
 import {Coordinates, PNNode} from "./petri-net.interfaces";
-import {Mark} from "./mark";
+import {Token} from "./token";
 import {drawText, isSameCoordinates, isWithinCircle, lengthOfLine} from "../utils/draw-utils";
 import {ScaleService} from "../services/scale.service";
 
 export class Place implements PNNode<Place>{
 
     text: string;
-    marks: Mark[] = [];
+    tokens: Token[] = [];
     readonly index: number;
     readonly centerCoordinates: Coordinates;
     private readonly radius: number;
@@ -36,7 +36,7 @@ export class Place implements PNNode<Place>{
         ctx.stroke();
         drawText(ctx, this.text, {x: this.centerCoordinates.x, y: this.centerCoordinates.y + this.radius + 20});
         ctx.closePath();
-        this.drawMarks(ctx);
+        this.drawTokens(ctx);
     }
 
     isWithin(coordinates: Coordinates): boolean {
@@ -53,16 +53,16 @@ export class Place implements PNNode<Place>{
         return place.radius === this.radius && isSameCoordinates(place.centerCoordinates, this.centerCoordinates);
     }
 
-    addMark (mark: Mark) {
-        const alreadyExistingMark = this.marks.find(m => m.isWithin(mark.position));
-        if(alreadyExistingMark) {
-            this.marks = this.marks.filter(m => m !== alreadyExistingMark);
+    addToken(token: Token) {
+        const alreadyExistingToken = this.tokens.find(m => m.isWithin(token.position));
+        if(alreadyExistingToken) {
+            this.tokens = this.tokens.filter(m => m !== alreadyExistingToken);
         } else {
-            this.marks.push(mark);
+            this.tokens.push(token);
         }
     }
 
-    private drawMarks(ctx: CanvasRenderingContext2D) {
-        this.marks.forEach(mark => mark.draw(ctx));
+    private drawTokens(ctx: CanvasRenderingContext2D) {
+        this.tokens.forEach(token => token.draw(ctx));
     }
 }

@@ -17,7 +17,7 @@ export class FileSaveService {
         fileContent.push('.places \n');
         net.places.forEach(place => {
             fileContent.push(place.exportName);
-            fileContent.push(' ' + place.marks.length);
+            fileContent.push(' ' + place.tokens.length);
             fileContent.push('\n');
         });
         fileContent.push('.arcs \n');

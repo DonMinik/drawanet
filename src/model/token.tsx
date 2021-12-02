@@ -1,7 +1,7 @@
 import {Coordinates, PNElement} from "./petri-net.interfaces";
 import {isSameCoordinates, isWithinCircle} from "../utils/draw-utils";
 
-export class Mark implements PNElement<Mark> {
+export class Token implements PNElement<Token> {
     position: Coordinates;
     private readonly RADIUS = 5;
     constructor(position:Coordinates) {
@@ -18,8 +18,8 @@ export class Mark implements PNElement<Mark> {
         ctx.fillStyle = '#FFF'
     }
 
-    equals(mark: Mark): boolean {
-        return isSameCoordinates(mark.position, this.position);
+    equals(token: Token): boolean {
+        return isSameCoordinates(token.position, this.position);
     }
 
     isWithin(coordinates: Coordinates): boolean {
