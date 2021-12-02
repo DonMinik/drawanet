@@ -24,7 +24,6 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
     onClick() {
         TextDetectionService.detectText(this.canvasRef.current).then(
             text => {
-                console.log('recognized text', text);
                 this.node.text = text;
                 this.setState({text: text});
                 this.callBack();

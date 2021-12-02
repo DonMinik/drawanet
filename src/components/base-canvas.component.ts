@@ -29,11 +29,6 @@ export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
     }
 
     protected isWithinCanvas(coordinates: Coordinates) {
-        console.log('left', this.canvasPositionLeft);
-        console.log('right', this.canvasPositionRight);
-        console.log('top', this.canvasPositionTop);
-        console.log('bottom', this.canvasPositionBottom);
-        console.log('coordinate',coordinates);
         return coordinates.x > this.canvasPositionLeft && coordinates.x < this.canvasPositionRight &&
             coordinates.y > this.canvasPositionTop && coordinates.y < this.canvasPositionBottom;
     }

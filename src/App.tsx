@@ -24,7 +24,6 @@ class App extends Component<any, {petriNet: PetriNet}> {
     }
 
     onMouseUp(e) {
-        console.log('mouse Up');
         this.canvasRef.current.checkParentMouseUp(e);
     }
 

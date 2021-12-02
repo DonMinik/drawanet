@@ -249,7 +249,6 @@ class CanvasComponent extends BaseCanvasComponent<{ petriNet: PetriNet }, {showT
 
     checkParentMouseUp(e: React.MouseEvent<HTMLDivElement>) {
         if (!this.isWithinCanvas({x: e.clientX, y: e.clientY}) ) {
-            console.log('outside');
             super.onMouseUp(e);
             this.reset();
             this.paintNet();
