@@ -187,24 +187,22 @@ class CanvasComponent extends ResizableCanvasComponent<{ petriNet: PetriNet }, C
             return arc.isCrossing(this.mouseMovement);
         })
 
-        if (potentialPlacesToDelete.length + potentialTransitionsToDelete.length === 1) {
-            if (potentialPlacesToDelete[0]) {
-                this.petriNet.places = this.petriNet.places.filter(place => place !== potentialPlacesToDelete[0]);
-            } else if (potentialTransitionsToDelete[0]) {
-                this.petriNet.transitions = this.petriNet.transitions.filter(transition => transition !== potentialTransitionsToDelete[0]);
-            }
-            this.petriNet.arcs = this.petriNet.arcs.filter(arc => {
-                return potentialPlacesToDelete[0] !== arc.start && potentialPlacesToDelete[0] !== arc.end && potentialTransitionsToDelete[0] !== arc.start && potentialTransitionsToDelete[0] !== arc.end;
-            });
-        } else if (potentialArcsToDelete.length === 1) {
-            if (potentialArcsToDelete[0].weight > 1) {
-                potentialArcsToDelete[0].weight--;
+        this.petriNet.places = this.petriNet.places.filter(place => place !== potentialPlacesToDelete.find(toDelete => toDelete === place));
+        this.petriNet.transitions = this.petriNet.transitions.filter(transition => transition !== potentialTransitionsToDelete.find(toDelete => toDelete === transition));
+        this.petriNet.arcs = this.petriNet.arcs.filter(arc => {
+            return (this.petriNet.places.find(place => place === arc.start) || this.petriNet.transitions.find(transition => transition === arc.start)) &&
+                (this.petriNet.places.find(place => place === arc.end) || this.petriNet.transitions.find(transition => transition === arc.end));
+        });
+
+        potentialArcsToDelete.forEach(toDelete => {
+            if (toDelete.weight > 1) {
+                toDelete.weight--;
             } else {
                 this.petriNet.arcs = this.petriNet.arcs.filter(arc => {
-                    return arc !== potentialArcsToDelete[0]
+                    return arc !== toDelete
                 });
             }
-        }
+        });
     }
 
     closeTextCanvas() {
@@ -270,7 +268,6 @@ class CanvasComponent extends ResizableCanvasComponent<{ petriNet: PetriNet }, C
     }
 
 
-
     render() {
         return (<div>
             {this.state.isResize ? <FontAwesomeIcon className='resizeIcon' icon={faExpandAlt}/> : null}
@@ -295,7 +292,7 @@ interface CircleProperties {
     radius: number,
 }
 
-interface CanvasState extends ResizeableCanvasState{
+interface CanvasState extends ResizeableCanvasState {
     showTextCanvas: boolean,
     toggle: boolean
     isResize: boolean
