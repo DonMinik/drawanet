@@ -9,7 +9,7 @@ class FooterComponent extends Component {
                 <h2 style={{textAlign: "right"}}>
                     ... and I know you do too!
                     <br/><br/>
-                    <a href="https://github.com/DonMinik/drawanet/issues" target="_blank">report a bug <FontAwesomeIcon
+                    <a href="https://github.com/DonMinik/drawanet/issues" target="_blank"  rel="noopener noreferrer">report a bug <FontAwesomeIcon
                         icon={faBug}/></a>
                     <br/><br/>
                     <a href="http://www.fernuni-hagen.de/mi/fakultaet/lehrende/bergenthum/index.shtml">Robin
