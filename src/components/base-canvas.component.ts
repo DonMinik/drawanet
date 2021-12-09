@@ -73,11 +73,11 @@ export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
 
     componentDidMount() {
         this.canvasCtx = this.canvasRef?.current?.getContext('2d');
-        this.setBaseDrawingParameters();
+        this.setBaseCanvasParameters();
         this.canvasCtx.fillText(this.initHintText,  this.canvasRef.current.width / 2 , this.canvasRef.current.height / 2);
     }
 
-    protected abstract setBaseDrawingParameters();
+    protected abstract setBaseCanvasParameters();
 
     abstract render();
 }

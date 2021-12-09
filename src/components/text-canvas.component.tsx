@@ -47,7 +47,7 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
         </div>);
     }
 
-    protected setBaseDrawingParameters() {
+    protected setBaseCanvasParameters() {
         this.canvasCtx.canvas.width = TextCanvasComponent.CANVAS_WIDTH;
         this.canvasCtx.canvas.height = TextCanvasComponent.CANVAS_HEIGHT;
         this.canvasCtx.strokeStyle = '#FFF';
