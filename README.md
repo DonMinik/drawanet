@@ -3,9 +3,10 @@ The I <3 Petri Nets Editor is an editor that allows a user to draw a petri net.
 It is based on behavior detections to provide an experience as close to actual paper drawing as possible.
 
 ##Concepts
-
+tbd
 ##Development
 ###OCR with Tesseract.js
+tbd
 
 ###Local development
 You need to have nodejs and npm installed. 
