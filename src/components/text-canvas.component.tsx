@@ -11,6 +11,8 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
     private static readonly CANVAS_HEIGHT = 200;
     private static readonly CANVAS_WIDTH = 400;
 
+    initHintText = 'Draw a name here';
+
     constructor(props: {coordinates: Coordinates, callBack: TextCanvasCallBack, node: PNNode<any>}){
         super(props);
         this.state = {
@@ -45,16 +47,15 @@ class TextCanvasComponent extends BaseCanvasComponent <{coordinates: Coordinates
         </div>);
     }
 
-    componentDidMount() {
-        super.componentDidMount();
-
+    protected setBaseDrawingParameters() {
         this.canvasCtx.canvas.width = TextCanvasComponent.CANVAS_WIDTH;
         this.canvasCtx.canvas.height = TextCanvasComponent.CANVAS_HEIGHT;
         this.canvasCtx.strokeStyle = '#FFF';
         this.canvasCtx.lineWidth = 3;
         this.canvasCtx.fillStyle = '#FFF';
+        this.canvasCtx.textAlign = 'center';
+        this.canvasCtx.font = '14px "Courier New"';
         this.setPosition()
-
     }
 
     private setPosition(){

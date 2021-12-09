@@ -6,6 +6,8 @@ export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
     mouseMovement: Coordinates[] = [];
     canvasRef: React.RefObject<HTMLCanvasElement>;
     canvasCtx: CanvasRenderingContext2D;
+    isPristine =true;
+    protected abstract initHintText: string;
 
     protected constructor(props: any) {
         super(props);
@@ -33,7 +35,15 @@ export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
             coordinates.y > this.canvasPositionTop && coordinates.y < this.canvasPositionBottom;
     }
 
+    protected reset() {
+        this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
+    }
+
     onMouseDown(event: React.MouseEvent<HTMLCanvasElement>) {
+        if (this.isPristine) {
+            this.reset();
+            this.isPristine = false;
+        }
         const x = event.clientX -  this.canvasPositionLeft;
         const y = event.clientY - this.canvasPositionTop;
         this.isDraw = true;
@@ -63,7 +73,11 @@ export abstract class BaseCanvasComponent<P, S> extends Component<P, S> {
 
     componentDidMount() {
         this.canvasCtx = this.canvasRef?.current?.getContext('2d');
+        this.setBaseDrawingParameters();
+        this.canvasCtx.fillText(this.initHintText,  this.canvasRef.current.width / 2 , this.canvasRef.current.height / 2);
     }
+
+    protected abstract setBaseDrawingParameters();
 
     abstract render();
 }

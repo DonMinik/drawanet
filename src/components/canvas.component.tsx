@@ -24,6 +24,8 @@ class CanvasComponent extends ResizableCanvasComponent<{ petriNet: PetriNet }, C
     private complete = false;
     private textCanvas: any;
 
+    initHintText = '... start drawing here by holding the left mouse button';
+
     constructor(props: { petriNet: PetriNet }) {
         super(props);
         this.canvasRef = React.createRef();
@@ -35,23 +37,18 @@ class CanvasComponent extends ResizableCanvasComponent<{ petriNet: PetriNet }, C
         }
     }
 
-    componentDidMount() {
-        super.componentDidMount();
+    protected setBaseDrawingParameters() {
         this.canvasCtx.canvas.width = this.canvasCtx.canvas.clientWidth;
         this.canvasCtx.canvas.height = 400;
-        this.setBaseDrawingParameters();
-    }
-
-    protected setBaseDrawingParameters() {
         this.canvasCtx.strokeStyle = '#640064';
         this.canvasCtx.lineWidth = 1;
-        this.canvasCtx.fillStyle = '#FFFFFF';
+        this.canvasCtx.fillStyle = '#000';
         this.canvasCtx.textAlign = 'center';
-        this.canvasCtx.font = '18px Arial';
+        this.canvasCtx.font = '18px "Courier New"';
     }
 
-    private reset() {
-        this.canvasCtx.clearRect(0, 0, this.canvasCtx.canvas.offsetWidth, this.canvasCtx.canvas.offsetHeight);
+    protected reset() {
+        super.reset();
         this.detectedShape = Shape.UNDEFINED;
         this.complete = false;
         this.mouseMovement = [];
