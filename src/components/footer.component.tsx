@@ -13,8 +13,8 @@ class FooterComponent extends Component {
                         icon={faBug}/></a>
                     <br/><br/>
                     <a href="http://www.fernuni-hagen.de/mi/fakultaet/lehrende/bergenthum/index.shtml">Robin
-                        Bergenthum</a> and <a href="https://www.fernuni-hagen.de/sttp/team/benjamin.meis.shtml">Benjamin
-                    Meis</a> <br/>
+                        Bergenthum</a>, <a href="https://www.fernuni-hagen.de/sttp/team/benjamin.meis.shtml">Benjamin
+                    Meis</a> and Dominik Mathar <br/>
                     Fakultät für Mathematik und Informatik <br/>
                     Fernuni in Hagen, Germany <br/>
                     <a href="https://www.fernuni-hagen.de/service/impressum.shtml">Impressum</a> &middot;

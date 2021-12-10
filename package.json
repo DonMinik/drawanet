@@ -1,8 +1,9 @@
 {
   "name": "petri-net-canvas",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "author": "Dominik Mathar",
   "private": true,
+  "homepage": "/ilovepetrinets/drawanet",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
